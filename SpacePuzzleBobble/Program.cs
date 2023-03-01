@@ -1,3 +1,3 @@
 ﻿
-using var game = new SpacePuzzleBobble.Game1();
+using var game = new SpacePuzzleBobble.MainScene();
 game.Run();

@@ -4,12 +4,12 @@ using Microsoft.Xna.Framework.Input;
 
 namespace SpacePuzzleBobble
 {
-    public class Game1 : Game
+    public class MainScene : Game
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-
-        public Game1()
+        
+        public MainScene()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
