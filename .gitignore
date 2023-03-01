@@ -33,6 +33,9 @@ obj/
 [Rr]elease*/
 Ankh.NoLoad
 
+#Visual Studio Folder
+.vs/
+
 #Tooling
 _ReSharper*/
 *.resharper
