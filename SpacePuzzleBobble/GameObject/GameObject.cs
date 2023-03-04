@@ -10,7 +10,7 @@ namespace SpacePuzzleBobble.GameObject
         public Vector2 Position;
         public float Rotation;
         public Vector2 Scale;
-        public Color color;
+
         public Vector2 Velocity;
 
         public string Name;

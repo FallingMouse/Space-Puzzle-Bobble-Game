@@ -25,9 +25,9 @@ namespace SpacePuzzleBobble
 
         public Boolean isShooting = false;
 
-        public KeyboardState PreviousKey, CurrentKey;
-
         public int[,] GameBoard;
+
+        public KeyboardState PreviousKey, CurrentKey;
 
         public Random Random = new Random();
 
@@ -39,7 +39,8 @@ namespace SpacePuzzleBobble
             GameWon,
             GameOver, // Lost
         }
-        public GameState _currentGameState = GameState.Idle;
+        public GameState _currentGameState;
+
 
         private Singleton()
         {

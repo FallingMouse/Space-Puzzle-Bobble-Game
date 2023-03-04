@@ -6,7 +6,8 @@ namespace SpacePuzzleBobble.GameObject
 {
     class Bubble : GameObject
     {
-        Vector2 _tick;
+        Vector2 _tick, _pose, _direction;
+        public Texture2D _bubbleTexture;
 
         public bool IsHitTop; // Bobble Hit the Bobble or Ceiling
         public bool IsDead; // Bobble Hit Floor
@@ -17,8 +18,7 @@ namespace SpacePuzzleBobble.GameObject
             Blue,
             Green,
             Yellow,
-            Pink,
-            Size
+            Pink
         }
         public BubbleType CurrentBubbleType;
 
@@ -30,6 +30,7 @@ namespace SpacePuzzleBobble.GameObject
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            spriteBatch.Draw(_texture, Position, null, Color.White, 0f, Vector2.Zero, 1/1.45f, SpriteEffects.None, 0);
             base.Draw(spriteBatch);
         }
 
@@ -40,7 +41,61 @@ namespace SpacePuzzleBobble.GameObject
 
         public override void Update(GameTime gameTime)
         {
+
             base.Update(gameTime);
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /*public String GetRandomColor()
+        {
+            _bubbleTexture = "";
+
+            CurrentBubbleType = (BubbleType)(Singleton.Instance.Random.Next((int)BubbleType.Size));
+            switch (CurrentBubbleType)
+            {
+                case BubbleType.Red:
+                    _bubbleTexture = "_bubbleTextureRed";
+                    break;
+                case BubbleType.Blue:
+                    _bubbleTexture = "_bubbleTextureBlue";
+                    break;
+                case BubbleType.Green:
+                    _bubbleTexture = "_bubbleTextureGreen";
+                    break;
+                case BubbleType.Yellow:
+                    _bubbleTexture = "_bubbleTextureYellow";
+                    break;
+                case BubbleType.Pink:
+                    _bubbleTexture = "_bubbleTexturePink";
+                    break;
+            }
+            return _bubbleTexture;
+        }*/
     }
 }
