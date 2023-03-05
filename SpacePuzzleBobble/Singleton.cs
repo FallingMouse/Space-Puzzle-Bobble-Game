@@ -25,7 +25,7 @@ namespace SpacePuzzleBobble
 
         public Boolean isShooting = false;
 
-        public int[,] GameBoard;
+        public int[,] GameBoard = new int[9,8];
 
         public KeyboardState PreviousKey, CurrentKey;
 
