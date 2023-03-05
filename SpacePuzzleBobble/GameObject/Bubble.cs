@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,7 +12,7 @@ namespace SpacePuzzleBobble.GameObject
 
         public Texture2D[] _bubbleTexture;
 
-        public static int indexOne, indexTwo;
+        public static int indexOne, indexTwo, priority = 1;
         public int index1, index2;
 
         public bool IsBubbleNext;
@@ -64,29 +65,61 @@ namespace SpacePuzzleBobble.GameObject
 
         public static int GetRandomColor()
         {
-            CurrentBubbleType = (BubbleType)(Singleton.Instance.Random.Next((int)BubbleType.SIZE));
+            int index = 0;
+            if (priority == 1) { 
             
-            switch (CurrentBubbleType)
-            {
-                case BubbleType.Red:
-                    indexOne = 0;
-                    break;
-                case BubbleType.Blue:
-                    indexOne = 1;
-                    break;
-                case BubbleType.Green:
-                    indexOne = 2;
-                    break;
-                case BubbleType.Yellow:
-                    indexOne = 3;
-                    break;
-                case BubbleType.Pink:
-                    indexOne = 4;
-                    break;
+                CurrentBubbleType = (BubbleType)(Singleton.Instance.Random.Next((int)BubbleType.SIZE));
+            
+                switch (CurrentBubbleType)
+                {
+                    case BubbleType.Red:
+                        indexOne = 0;
+                        break;
+                    case BubbleType.Blue:
+                        indexOne = 1;
+                        break;
+                    case BubbleType.Green:
+                        indexOne = 2;
+                        break;
+                    case BubbleType.Yellow:
+                        indexOne = 3;
+                        break;
+                    case BubbleType.Pink:
+                        indexOne = 4;
+                        break;
+                }
+                index = indexOne;
             }
-            //index1 = 0;
 
-            return indexOne;
+            else if (priority == 2)
+            {
+
+                CurrentBubbleType = (BubbleType)(Singleton.Instance.Random.Next((int)BubbleType.SIZE));
+
+                switch (CurrentBubbleType)
+                {
+                    case BubbleType.Red:
+                        indexTwo = 0;
+                        break;
+                    case BubbleType.Blue:
+                        indexTwo = 1;
+                        break;
+                    case BubbleType.Green:
+                        indexTwo = 2;
+                        break;
+                    case BubbleType.Yellow:
+                        indexTwo = 3;
+                        break;
+                    case BubbleType.Pink:
+                        indexTwo = 4;
+                        break;
+                }
+                index = indexTwo;
+                priority = 0;
+            } 
+            priority++;
+            
+            return index;
         }
 
     }

@@ -102,6 +102,9 @@ namespace SpacePuzzleBobble
             fontSize = _font.MeasureString(Bubble.indexOne.ToString());
             _spriteBatch.DrawString(_font, Bubble.indexOne.ToString(), new Vector2(1143, 827), Color.Black);
 
+            fontSize = _font.MeasureString(Bubble.indexTwo.ToString());
+            _spriteBatch.DrawString(_font, Bubble.indexTwo.ToString(), new Vector2(1143, 900), Color.Black);
+
             // Draw Crosshair
             _crosshair.Draw(_spriteBatch);
 
@@ -122,7 +125,7 @@ namespace SpacePuzzleBobble
             {
                 Position = new Vector2((Singleton.SCREENWIDTH / 2) - Singleton.TILESIZE * 1.40f,
                             (Singleton.TILESIZE * 11) + Singleton.TILESIZE / 8f),
-                Scale = new Vector2(1/1.45f, 1 / 1.45f)
+                Scale = new Vector2(1/1.45f, 1/1.45f)
             };
 
             _bubbleNextTwo= new Bubble(_bubbleTexture)
