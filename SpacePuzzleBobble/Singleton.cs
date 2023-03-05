@@ -23,6 +23,7 @@ namespace SpacePuzzleBobble
         public int Score;
         public int Level;
 
+        public Boolean spacebarPressed = false;
         public Boolean isShooting = false;
 
         public int[,] GameBoard = new int[9,8];

@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Input;
 using SpacePuzzleBobble.GameObject;
 //using static SpacePuzzleBobble.GameObject.Bubble;
 using System;
+using System.ComponentModel.Design;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace SpacePuzzleBobble
 {
@@ -85,6 +87,19 @@ namespace SpacePuzzleBobble
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            // Score
+            KeyboardState keyboardState = Keyboard.GetState();
+            if (keyboardState.IsKeyDown(Keys.Space) && !Singleton.Instance.spacebarPressed)
+            {
+                Singleton.Instance.Score += 100;
+                Singleton.Instance.spacebarPressed = true;
+            }
+            if (keyboardState.IsKeyUp(Keys.Space))
+            {
+                Singleton.Instance.spacebarPressed = false;
+            }
+
+
             // TODO: Add your update logic here
             _crosshair.Update(gameTime);
             
@@ -120,6 +135,9 @@ namespace SpacePuzzleBobble
 
             fontSize = _font.MeasureString(Bubble.indexTwo.ToString());
             _spriteBatch.DrawString(_font, Bubble.indexTwo.ToString(), new Vector2(1143, 900), Color.Black);
+
+            //Score
+            _spriteBatch.DrawString(_font, "Score: " + Singleton.Instance.Score.ToString(), new Vector2(10, 10), Color.White);
 
             // Draw Crosshair
             _crosshair.Draw(_spriteBatch);
@@ -210,7 +228,7 @@ namespace SpacePuzzleBobble
                 Scale = new Vector2(0.28f, 0.28f)
             };
 
-            
+            Singleton.Instance.Score = 0;
         }
     }
 }
