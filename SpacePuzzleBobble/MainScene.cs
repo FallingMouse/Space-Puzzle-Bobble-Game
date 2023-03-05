@@ -134,6 +134,8 @@ namespace SpacePuzzleBobble
                             Singleton.TILESIZE * 12.3f),
                 Scale = new Vector2(0.28f, 0.28f)
             };
+
+            
         }
     }
 }
