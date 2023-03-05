@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SpacePuzzleBobble.GameObject;
-using static SpacePuzzleBobble.GameObject.Bubble;
+//using static SpacePuzzleBobble.GameObject.Bubble;
 using System;
 
 namespace SpacePuzzleBobble
@@ -11,13 +11,14 @@ namespace SpacePuzzleBobble
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        
-        GameObject.Joystick _joystick;
-        GameObject.Bubble _bubbleJoyStick;
 
-        Texture2D _backgroundTexture, _rectTestTexture, _joystickTexture;
-                //_bubbleTextureRed, _bubbleTextureBlue, _bubbleTextureGreen, _bubbleTextureYellow, _bubbleTexturePink;
+        Crosshair _crosshair;
+        Bubble _bubbleNextOne, _bubbleNextTwo;
+
+        Texture2D _backgroundTexture, _rectTestTexture, _crosshairTexture;
         Texture2D[] _bubbleTexture;
+
+        SpriteFont _font;
 
         public MainScene()
         {
@@ -42,7 +43,7 @@ namespace SpacePuzzleBobble
 
             // Load Texture
             _backgroundTexture = this.Content.Load<Texture2D>("Background/background");
-            _joystickTexture = this.Content.Load<Texture2D>("Joystick/joystick");
+            _crosshairTexture = this.Content.Load<Texture2D>("Crosshair/crosshair");
 
             _bubbleTexture = new Texture2D[5];
             _bubbleTexture[0] = this.Content.Load<Texture2D>("Bubble/red");
@@ -57,6 +58,8 @@ namespace SpacePuzzleBobble
             for(int i = 0; i< data.Length; i++) data[i] = Color.White;
             _rectTestTexture.SetData(data);
 
+            _font = Content.Load<SpriteFont>("Font/GameFont");
+
             Reset();
         }
 
@@ -68,7 +71,7 @@ namespace SpacePuzzleBobble
                 Exit();
 
             // TODO: Add your update logic here
-            _joystick.Update(gameTime);
+            _crosshair.Update(gameTime);
             
             //Singleton.Instance.PreviousKey = Singleton.Instance.CurrentKey;
 
@@ -84,14 +87,23 @@ namespace SpacePuzzleBobble
             // Draw Background
             _spriteBatch.Draw(_backgroundTexture, new Vector2(0,0), Color.White);
 
-            // Test Game Table
-            _spriteBatch.Draw(_rectTestTexture, new Vector2(705, 65), null, Color.Black, 0f, Vector2.Zero, new Vector2(Singleton.GAMEWIDTH * Singleton.TILESIZE, Singleton.GAMEHEIGHT * Singleton.TILESIZE), SpriteEffects.None, 0);
+            // Draw Game Table
+            _spriteBatch.Draw(_rectTestTexture, new Vector2(Singleton.TILESIZE * 11, Singleton.TILESIZE), 
+                            null, Color.Black, 0f, Vector2.Zero, 
+                            new Vector2(Singleton.GAMEWIDTH * Singleton.TILESIZE, Singleton.GAMEHEIGHT * Singleton.TILESIZE), 
+                            SpriteEffects.None, 0);
 
-            // Draw Bubble
-            _bubbleJoyStick.Draw(_spriteBatch);
+            // Draw Bubble Crosshair
+            _bubbleNextOne.Draw(_spriteBatch);
+            _bubbleNextTwo.Draw(_spriteBatch);
 
-            // Draw Joystick
-            _joystick.Draw(_spriteBatch);
+            // Check Color Index Bubble is Correct?
+            Vector2 fontSize;
+            fontSize = _font.MeasureString(Bubble.indexOne.ToString());
+            _spriteBatch.DrawString(_font, Bubble.indexOne.ToString(), new Vector2(1143, 827), Color.Black);
+
+            // Draw Crosshair
+            _crosshair.Draw(_spriteBatch);
 
             _spriteBatch.End();
             _graphics.BeginDraw();
@@ -101,17 +113,24 @@ namespace SpacePuzzleBobble
 
         protected void Reset()
         {
-            _joystick = new GameObject.Joystick(_joystickTexture, _bubbleJoyStick)
+            _crosshair = new GameObject.Crosshair(_crosshairTexture)
             {
                 Position = new Vector2(Singleton.SCREENWIDTH / 2, Singleton.SCREENHEIGHT)
             };
 
-            _bubbleJoyStick = new Bubble(_bubbleTexture[Singleton.Instance.Random.Next(_bubbleTexture.Length)])
+            _bubbleNextOne = new Bubble(_bubbleTexture)
             {
                 Position = new Vector2((Singleton.SCREENWIDTH / 2) - Singleton.TILESIZE * 1.40f,
-                            (Singleton.TILESIZE * 11) + Singleton.TILESIZE / 8f)
+                            (Singleton.TILESIZE * 11) + Singleton.TILESIZE / 8f),
+                Scale = new Vector2(1/1.45f, 1 / 1.45f)
             };
 
+            _bubbleNextTwo= new Bubble(_bubbleTexture)
+            {
+                Position = new Vector2((Singleton.SCREENWIDTH / 2) - Singleton.TILESIZE * 3.6f, 
+                            Singleton.TILESIZE * 12.3f),
+                Scale = new Vector2(0.28f, 0.28f)
+            };
         }
     }
 }

@@ -7,7 +7,7 @@ using static SpacePuzzleBobble.GameObject.Bubble;
 
 namespace SpacePuzzleBobble.GameObject
 {
-    class Joystick : GameObject
+    class Crosshair : GameObject
     {
         private Texture2D _bobbleTexture;
         
@@ -19,9 +19,8 @@ namespace SpacePuzzleBobble.GameObject
         private float rotation;
         private float _elapsedTime;
 
-        public Joystick(Texture2D texture, Bubble _bubbleNext) : base(texture)
+        public Crosshair(Texture2D texture) : base(texture)
         {
-            this._bubbleNext = _bubbleNext;
             rotation = 0f;
             _elapsedTime = 0f;
         }
@@ -31,7 +30,7 @@ namespace SpacePuzzleBobble.GameObject
             // Elapsed Time
             _elapsedTime += gameTime.ElapsedGameTime.Ticks / (float)TimeSpan.TicksPerSecond;
 
-            // Joystick Move
+            // Crosshair Move
             if (_elapsedTime > 0.03f)
             {
                 if (Singleton.Instance.CurrentKey.IsKeyDown(Keys.Left) || Singleton.Instance.CurrentKey.IsKeyDown(Keys.A))
@@ -39,7 +38,7 @@ namespace SpacePuzzleBobble.GameObject
                     rotation -= 0.06f;
                 }
                 if (Singleton.Instance.CurrentKey.IsKeyDown(Keys.Right) || Singleton.Instance.CurrentKey.IsKeyDown(Keys.D))
-                    {
+                {
                     rotation += 0.06f;
                 }
                 _elapsedTime = 0f;
