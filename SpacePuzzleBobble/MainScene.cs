@@ -105,14 +105,6 @@ namespace SpacePuzzleBobble
             // Draw Background
             _spriteBatch.Draw(_backgroundTexture, new Vector2(0,0), Color.White);
 
-            // Draw Game Table
-            /*_spriteBatch.Draw(_rectTestTexture, new Vector2(Singleton.TILESIZE * 11, Singleton.TILESIZE), 
-                            null, Color.Black, 0f, Vector2.Zero, 
-                            new Vector2(Singleton.GAMEWIDTH * Singleton.TILESIZE, Singleton.GAMEHEIGHT * Singleton.TILESIZE), 
-                            SpriteEffects.None, 0);
-            */
-
-            // Draw Bubble Crosshair
             _bubbleNextOne.Draw(_spriteBatch);
             _bubbleNextTwo.Draw(_spriteBatch);
 
@@ -123,53 +115,19 @@ namespace SpacePuzzleBobble
             _crosshair.Draw(_spriteBatch);
 
             //Draw starting pattern bubbles
-            //PS : Maybe will move to Singleton.cs , when the game state is set-up  (Idle : Defualt state)
-            for(int i = 0; i < Singleton.Instance.GameBoard.GetLength(0); i++)
+            //PS : when the game state is set-up  (Idle : Defualt state)
+            for (int i = 0; i < Singleton.Instance.GameBoard.GetLength(0); i++)
             {
                 for (int j = 0; j < Singleton.Instance.GameBoard.GetLength(1); j++)
                 {
-                    Rectangle _rectTable = new Rectangle((j * Singleton.TILESIZE) + (Singleton.TILESIZE * 11) + ((i % 2) * (Singleton.TILESIZE / 2)),
+                    // Red Table
+                    /*Rectangle _rectTable = new Rectangle((j * Singleton.TILESIZE) + (Singleton.TILESIZE * 11) + ((i % 2) * (Singleton.TILESIZE / 2)),
                                                     (int)i * Singleton.TILESIZE + (Singleton.TILESIZE), Singleton.TILESIZE, Singleton.TILESIZE);
                     _spriteBatch.Draw(_rectTestTexture, new Rectangle(_rectTable.X, _rectTable.Y, Singleton.TILESIZE, 1), new Color(Color.Red, 100));
-                    _spriteBatch.Draw(_rectTestTexture, new Rectangle(_rectTable.X, _rectTable.Y, 1, Singleton.TILESIZE), new Color(Color.Red, 100));
+                    _spriteBatch.Draw(_rectTestTexture, new Rectangle(_rectTable.X, _rectTable.Y, 1, Singleton.TILESIZE), new Color(Color.Red, 100));*/
 
-                    switch (Singleton.Instance.GameBoard[i, j])
-                    {
-                        case 0:
-                            //Draw Red bubble
-                            _spriteBatch.Draw(_bubbleTexture[0], new Vector2(Singleton.TILESIZE * j + 703, Singleton.TILESIZE * i + Singleton.TILESIZE),
-                                            null, Color.White, 0f, Vector2.Zero,
-                                            0.25f, SpriteEffects.None, 0);
-                            break;
-
-                        case 1:
-                            //Draw Blue bubble
-                            _spriteBatch.Draw(_bubbleTexture[1], new Vector2(Singleton.TILESIZE * j + 703, Singleton.TILESIZE * i + Singleton.TILESIZE),
-                                            null, Color.White, 0f, Vector2.Zero,
-                                            0.25f, SpriteEffects.None, 0);
-                            break;
-
-                        case 2:
-                            //Draw Green bubble
-                            _spriteBatch.Draw(_bubbleTexture[2], new Vector2(Singleton.TILESIZE * j + 703, Singleton.TILESIZE * i + Singleton.TILESIZE),
-                                            null, Color.White, 0f, Vector2.Zero,
-                                            0.25f, SpriteEffects.None, 0);
-                            break;
-
-                        case 3:
-                            //Draw Yellow bubble
-                            _spriteBatch.Draw(_bubbleTexture[3], new Vector2(Singleton.TILESIZE * j + 703, Singleton.TILESIZE * i + Singleton.TILESIZE),
-                                            null, Color.White, 0f, Vector2.Zero,
-                                            0.25f, SpriteEffects.None, 0);
-                            break;
-
-                        case 4:
-                            //Draw Pink bubble
-                            _spriteBatch.Draw(_bubbleTexture[4], new Vector2(Singleton.TILESIZE * j + 703, Singleton.TILESIZE * i + Singleton.TILESIZE),
-                                            null, Color.White, 0f, Vector2.Zero,
-                                            0.25f, SpriteEffects.None, 0);
-                            break;
-                    }
+                    if (_bubbleTable[i,j] != null)
+                        _bubbleTable[i, j].Draw(_spriteBatch);
                 }
             }
 
@@ -186,9 +144,9 @@ namespace SpacePuzzleBobble
             {
             /*        0    1   2  3   4   5   6   7  */
             /*0*/    {0   ,0 , 1 ,1  ,2  ,2  ,3  ,3  },
-            /*1*/    {0   ,0 , 1 ,1  ,2  ,2  ,3  ,3  },
+            /*1*/    {0   ,0 , 1 ,1  ,2  ,2  ,3  ,-1  },
             /*2*/    {1   ,1 , 2 ,2  ,3  ,3  ,0  ,0  },
-            /*3*/    {1   ,1 , 2 ,2  ,3  ,3  ,0  ,0  },
+            /*3*/    {1   ,1 , 2 ,2  ,3  ,3  ,0  ,-1  },
             /*4*/    {-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 },
             /*5*/    {-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 },
             /*6*/    {-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 },
@@ -216,6 +174,27 @@ namespace SpacePuzzleBobble
             };
 
             _bubbleTable = new Bubble[Singleton.GAMEHEIGHT, Singleton.GAMEWIDTH];
+
+            for(int i = 0; i < Singleton.Instance.GameBoard.GetLength(0); i++)
+            {
+                for (int j = 0; j < Singleton.Instance.GameBoard.GetLength(1); j++)
+                {
+                    Rectangle _rectTable = new Rectangle((j * Singleton.TILESIZE) + (Singleton.TILESIZE * 11) + ((i % 2) * (Singleton.TILESIZE / 2)),
+                                                (int)i * Singleton.TILESIZE + (Singleton.TILESIZE), Singleton.TILESIZE, Singleton.TILESIZE);
+
+                    if (Singleton.Instance.GameBoard[i, j] != -1)
+                    {
+                        _bubbleTable[i, j] = new Bubble(_bubbleTexture[Singleton.Instance.GameBoard[i, j]])
+                        {
+                            
+                            Position = new Vector2(_rectTable.X, _rectTable.Y),
+                            // Old Position(not in table)
+                            //Position = new Vector2(Singleton.TILESIZE * j + 703, Singleton.TILESIZE * i + Singleton.TILESIZE),
+                            Scale = new Vector2(0.25f, 0.25f)
+                        };
+                    }
+                }
+            }
 
             Singleton.Instance.Score = 0;
         }
