@@ -96,6 +96,10 @@ namespace SpacePuzzleBobble
             {
                 case Singleton.GameState.Playing:
                     //if bubbles hit ground
+                    if(_bubbleNextOne.IsDead)
+                    {
+                        Singleton.Instance._currentGameState= Singleton.GameState.GameOver;
+                    }
 
                     //change to pause state
                     if (Singleton.Instance.CurrentKey.IsKeyDown(Keys.P) && !Singleton.Instance.CurrentKey.Equals(Singleton.Instance.PreviousKey))
@@ -108,7 +112,7 @@ namespace SpacePuzzleBobble
 
                 case Singleton.GameState.Paused:
                     //handled game pause
-                    if (Singleton.Instance.CurrentKey.IsKeyDown(Keys.P) && !Singleton.Instance.CurrentKey.Equals(Singleton.Instance.PreviousKey))
+                    if (Singleton.Instance.CurrentKey.IsKeyDown(Keys.U) && !Singleton.Instance.CurrentKey.Equals(Singleton.Instance.PreviousKey))
                     {
                         Singleton.Instance._currentGameState = Singleton.GameState.Playing;
                     }
@@ -120,6 +124,11 @@ namespace SpacePuzzleBobble
 
                 case Singleton.GameState.GameOver: 
                     //check if are there any availiable block left
+                    if(Singleton.Instance.CurrentKey.IsKeyDown(Keys.R) && !Singleton.Instance.CurrentKey.Equals(Singleton.Instance.PreviousKey))
+                    {
+                        Reset();
+                        //Singleton.Instance._currentGameState = Singleton.GameState.Idle;
+                    }
                     break;
             }
 
@@ -143,7 +152,9 @@ namespace SpacePuzzleBobble
             _bubbleNextTwo.Draw(_spriteBatch);
 
             //Score
-            _spriteBatch.DrawString(_font, "Score: " + Singleton.Instance.Score.ToString(), new Vector2(10, 10), Color.White);
+            //_spriteBatch.DrawString(_font, "Score: " + Singleton.Instance.Score.ToString(), new Vector2(10, 10), Color.White);
+            _spriteBatch.DrawString(_font, "Score: " + Singleton.Instance.Score.ToString(), new Vector2(Singleton.TILESIZE * 1.8f, Singleton.TILESIZE * 13.5f),
+                                    Color.White, -0.24f, Vector2.Zero, new Vector2(3.5f, 3.5f), SpriteEffects.None, 1.0f);
 
             // Draw Crosshair
             _crosshair.Draw(_spriteBatch);
@@ -172,7 +183,9 @@ namespace SpacePuzzleBobble
                     break;
 
                 case Singleton.GameState.Paused:
-                    _spriteBatch.DrawString(_font, "Pause", new Vector2(Singleton.SCREENWIDTH / 2, Singleton.SCREENHEIGHT / 2), Color.White);
+                    Vector2 _fontSize = _font.MeasureString("Pause");
+                    _spriteBatch.DrawString(_font, "Pause", new Vector2((Singleton.SCREENWIDTH - _fontSize.X) / 2, (Singleton.SCREENHEIGHT - _fontSize.Y) / 2),
+                                            Color.White, 0f, Vector2.Zero, new Vector2(4.0f, 4.0f), SpriteEffects.None, 1.0f);
 
                     break;
 
@@ -181,6 +194,10 @@ namespace SpacePuzzleBobble
                     break;
 
                 case Singleton.GameState.GameOver:
+                    Vector2 _fontSize_over = _font.MeasureString("Press R to restart the game");
+                    _spriteBatch.DrawString(_font, "Press R to restart the game",
+                                            new Vector2((Singleton.SCREENWIDTH - _fontSize_over.X) / 2, (Singleton.SCREENHEIGHT - _fontSize_over.Y) / 2),
+                                            Color.YellowGreen, 0f, Vector2.Zero, new Vector2(1.0f, 1.0f), SpriteEffects.None, 1.0f);
                     
                     break;
             }
@@ -232,6 +249,7 @@ namespace SpacePuzzleBobble
                             Singleton.TILESIZE * 12.3f),
                 Scale = new Vector2(0.28f, 0.28f)
             };
+            
             
             _bubbleTable = new Bubble[Singleton.GAMEHEIGHT, Singleton.GAMEWIDTH];
 
