@@ -14,7 +14,6 @@ namespace SpacePuzzleBobble.GameObject
 
         public static int indexOne, indexTwo, priority = 1;
 
-        public bool IsBubbleNext;
         public bool IsHitTop; // Bobble Hit the Bobble or Ceiling
         public bool IsDead; // Bobble Hit Floor
 
@@ -38,21 +37,18 @@ namespace SpacePuzzleBobble.GameObject
         public Bubble(Texture2D[] texture) : base(texture[GetRandomColor()])
         {
             _bubbleTexture = texture;
-            this.IsBubbleNext = true;
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if(IsBubbleNext)
-                spriteBatch.Draw(_texture, Position, null, Color.White, 0f, Vector2.Zero, Scale, SpriteEffects.None, 0);
-            else 
-                spriteBatch.Draw(_texture, Position, null, Color.White, 0f, Vector2.Zero, Scale, SpriteEffects.None, 0);
+            spriteBatch.Draw(_texture, Position, null, Color.White, 0f, Vector2.Zero, Scale, SpriteEffects.None, 0);
             base.Draw(spriteBatch);
         }
 
         public override void Reset()
         {
-
+            // Maybe will use this to link between _bubbleNextOne and _bubbleNextTwo
+            // Then we can use this in MainScene.cs like Tetris Lab
             base.Reset();
         }
 

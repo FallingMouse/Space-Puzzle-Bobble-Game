@@ -15,8 +15,7 @@ namespace SpacePuzzleBobble
 
         Crosshair _crosshair;
         Bubble _bubbleNextOne, _bubbleNextTwo;
-
-        Vector2 _bubbleTableSize;
+        Bubble[,] _bubbleTable;
 
         Texture2D _backgroundTexture, _rectTestTexture, _crosshairTexture;
         Texture2D[] _bubbleTexture;
@@ -33,24 +32,12 @@ namespace SpacePuzzleBobble
         protected override void Initialize()
         {
             // 1920, 1080 (16:9 Resolution)
+            Window.Title = "UFO Khon Kaen";
+            Window.AllowUserResizing= true;
+            //Window.IsBorderless= true;
             _graphics.PreferredBackBufferWidth = Singleton.SCREENWIDTH;
             _graphics.PreferredBackBufferHeight = Singleton.SCREENHEIGHT;
             _graphics.ApplyChanges();
-
-            //Starting pattern bubbles
-            Singleton.Instance.GameBoard = new int[9,8]
-            {
-            /*        0    1   2  3   4   5   6   7  */
-            /*0*/    {0   ,0 , 1 ,1  ,2  ,2  ,3  ,3  },
-            /*1*/    {0   ,0 , 1 ,1  ,2  ,2  ,3  ,3  },
-            /*2*/    {1   ,1 , 2 ,2  ,3  ,3  ,0  ,0  },
-            /*3*/    {1   ,1 , 2 ,2  ,3  ,3  ,0  ,0  },
-            /*4*/    {-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 },
-            /*5*/    {-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 },
-            /*6*/    {-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 },
-            /*7*/    {-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 },
-            /*8*/    {-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 }
-            };
 
             base.Initialize();
         }
@@ -141,13 +128,6 @@ namespace SpacePuzzleBobble
             {
                 for (int j = 0; j < Singleton.Instance.GameBoard.GetLength(1); j++)
                 {
-
-                    //draw game board
-                    /*_spriteBatch.Draw(_rectTestTexture, new Vector2(Singleton.TILESIZE * 11, Singleton.TILESIZE),
-                            null, Color.Black, 0f, Vector2.Zero,
-                            new Vector2(Singleton.GAMEWIDTH * Singleton.TILESIZE, Singleton.GAMEHEIGHT * Singleton.TILESIZE),
-                            SpriteEffects.None, 0);
-                    */
                     Rectangle _rectTable = new Rectangle((j * Singleton.TILESIZE) + (Singleton.TILESIZE * 11) + ((i % 2) * (Singleton.TILESIZE / 2)),
                                                     (int)i * Singleton.TILESIZE + (Singleton.TILESIZE), Singleton.TILESIZE, Singleton.TILESIZE);
                     _spriteBatch.Draw(_rectTestTexture, new Rectangle(_rectTable.X, _rectTable.Y, Singleton.TILESIZE, 1), new Color(Color.Red, 100));
@@ -159,35 +139,35 @@ namespace SpacePuzzleBobble
                             //Draw Red bubble
                             _spriteBatch.Draw(_bubbleTexture[0], new Vector2(Singleton.TILESIZE * j + 703, Singleton.TILESIZE * i + Singleton.TILESIZE),
                                             null, Color.White, 0f, Vector2.Zero,
-                                            _bubbleTableSize, SpriteEffects.None, 0);
+                                            0.25f, SpriteEffects.None, 0);
                             break;
 
                         case 1:
                             //Draw Blue bubble
                             _spriteBatch.Draw(_bubbleTexture[1], new Vector2(Singleton.TILESIZE * j + 703, Singleton.TILESIZE * i + Singleton.TILESIZE),
                                             null, Color.White, 0f, Vector2.Zero,
-                                            _bubbleTableSize, SpriteEffects.None, 0);
+                                            0.25f, SpriteEffects.None, 0);
                             break;
 
                         case 2:
                             //Draw Green bubble
                             _spriteBatch.Draw(_bubbleTexture[2], new Vector2(Singleton.TILESIZE * j + 703, Singleton.TILESIZE * i + Singleton.TILESIZE),
                                             null, Color.White, 0f, Vector2.Zero,
-                                            _bubbleTableSize, SpriteEffects.None, 0);
+                                            0.25f, SpriteEffects.None, 0);
                             break;
 
                         case 3:
                             //Draw Yellow bubble
                             _spriteBatch.Draw(_bubbleTexture[3], new Vector2(Singleton.TILESIZE * j + 703, Singleton.TILESIZE * i + Singleton.TILESIZE),
                                             null, Color.White, 0f, Vector2.Zero,
-                                            _bubbleTableSize, SpriteEffects.None, 0);
+                                            0.25f, SpriteEffects.None, 0);
                             break;
 
                         case 4:
                             //Draw Pink bubble
                             _spriteBatch.Draw(_bubbleTexture[4], new Vector2(Singleton.TILESIZE * j + 703, Singleton.TILESIZE * i + Singleton.TILESIZE),
                                             null, Color.White, 0f, Vector2.Zero,
-                                            _bubbleTableSize, SpriteEffects.None, 0);
+                                            0.25f, SpriteEffects.None, 0);
                             break;
                     }
                 }
@@ -201,7 +181,22 @@ namespace SpacePuzzleBobble
 
         protected void Reset()
         {
-            _crosshair = new GameObject.Crosshair(_crosshairTexture)
+            //Starting pattern bubbles
+            Singleton.Instance.GameBoard = new int[Singleton.GAMEHEIGHT, Singleton.GAMEWIDTH]
+            {
+            /*        0    1   2  3   4   5   6   7  */
+            /*0*/    {0   ,0 , 1 ,1  ,2  ,2  ,3  ,3  },
+            /*1*/    {0   ,0 , 1 ,1  ,2  ,2  ,3  ,3  },
+            /*2*/    {1   ,1 , 2 ,2  ,3  ,3  ,0  ,0  },
+            /*3*/    {1   ,1 , 2 ,2  ,3  ,3  ,0  ,0  },
+            /*4*/    {-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 },
+            /*5*/    {-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 },
+            /*6*/    {-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 },
+            /*7*/    {-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 },
+            /*8*/    {-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 }
+            };
+
+            _crosshair = new Crosshair(_crosshairTexture)
             {
                 Position = new Vector2(Singleton.SCREENWIDTH / 2, Singleton.SCREENHEIGHT)
             };
@@ -213,15 +208,16 @@ namespace SpacePuzzleBobble
                 Scale = new Vector2(1/1.45f, 1/1.45f)
             };
 
-            _bubbleNextTwo= new Bubble(_bubbleTexture)
+            _bubbleNextTwo = new Bubble(_bubbleTexture)
             {
                 Position = new Vector2((Singleton.SCREENWIDTH / 2) - Singleton.TILESIZE * 3.6f, 
                             Singleton.TILESIZE * 12.3f),
                 Scale = new Vector2(0.28f, 0.28f)
             };
 
+            _bubbleTable = new Bubble[Singleton.GAMEHEIGHT, Singleton.GAMEWIDTH];
+
             Singleton.Instance.Score = 0;
-            _bubbleTableSize = new Vector2(0.25f, 0.25f); // 1/4 becuase image is 256 and We want 64
         }
     }
 }
