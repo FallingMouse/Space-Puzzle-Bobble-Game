@@ -21,6 +21,7 @@ namespace SpacePuzzleBobble
         Texture2D[] _bubbleTexture;
 
         SpriteFont _font;
+        SpriteFont _font1;
 
         public MainScene()
         {
@@ -64,6 +65,7 @@ namespace SpacePuzzleBobble
             _rectTestTexture.SetData(data);
 
             _font = Content.Load<SpriteFont>("Font/GameFont");
+            _font1 = Content.Load<SpriteFont>("Font/GameFont1");
 
             Reset();
         }
@@ -103,13 +105,20 @@ namespace SpacePuzzleBobble
             _spriteBatch.Begin();
 
             // Draw Background
-            _spriteBatch.Draw(_backgroundTexture, new Vector2(0,0), Color.White);
+            _spriteBatch.Draw(_backgroundTexture, new Vector2(0, 0), Color.White);
 
             _bubbleNextOne.Draw(_spriteBatch);
             _bubbleNextTwo.Draw(_spriteBatch);
 
-            //Score
-            _spriteBatch.DrawString(_font, "Score: " + Singleton.Instance.Score.ToString(), new Vector2(10, 10), Color.White);
+            // Draw Score
+            //_spriteBatch.DrawString(_font1, "SCORE ", new Vector2(220, 850), Color.White);
+            //_spriteBatch.DrawString(_font, Singleton.Instance.Score.ToString("D6"), new Vector2(179, 900), Color.White);
+
+            // Draw Score
+            float rotationScore1 = MathHelper.ToRadians(-11.2f);
+            float rotationScore2 = MathHelper.ToRadians(-13.8f);
+            _spriteBatch.DrawString(_font1, "SCORE", new Vector2(278, 858), Color.White, rotationScore1, _font1.MeasureString("SCORE") / 2f, 1f, SpriteEffects.None, 0f);
+            _spriteBatch.DrawString(_font, Singleton.Instance.Score.ToString("D6"), new Vector2(245, 905), Color.White, rotationScore2, _font1.MeasureString("SCORE") / 2f, 1f, SpriteEffects.None, 0f);
 
             // Draw Crosshair
             _crosshair.Draw(_spriteBatch);
@@ -121,12 +130,12 @@ namespace SpacePuzzleBobble
                 for (int j = 0; j < Singleton.Instance.GameBoard.GetLength(1); j++)
                 {
                     // Red Table
-                    /*Rectangle _rectTable = new Rectangle((j * Singleton.TILESIZE) + (Singleton.TILESIZE * 11) + ((i % 2) * (Singleton.TILESIZE / 2)),
+                    Rectangle _rectTable = new Rectangle((j * Singleton.TILESIZE) + (Singleton.TILESIZE * 11) + ((i % 2) * (Singleton.TILESIZE / 2)),
                                                     (int)i * Singleton.TILESIZE + (Singleton.TILESIZE), Singleton.TILESIZE, Singleton.TILESIZE);
                     _spriteBatch.Draw(_rectTestTexture, new Rectangle(_rectTable.X, _rectTable.Y, Singleton.TILESIZE, 1), new Color(Color.Red, 100));
-                    _spriteBatch.Draw(_rectTestTexture, new Rectangle(_rectTable.X, _rectTable.Y, 1, Singleton.TILESIZE), new Color(Color.Red, 100));*/
+                    _spriteBatch.Draw(_rectTestTexture, new Rectangle(_rectTable.X, _rectTable.Y, 1, Singleton.TILESIZE), new Color(Color.Red, 100));
 
-                    if (_bubbleTable[i,j] != null)
+                    if (_bubbleTable[i, j] != null)
                         _bubbleTable[i, j].Draw(_spriteBatch);
                 }
             }

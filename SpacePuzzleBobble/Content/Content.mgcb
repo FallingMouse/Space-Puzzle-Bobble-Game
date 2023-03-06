@@ -128,3 +128,10 @@
 /processorParam:TextureFormat=Compressed
 /build:Font/GameFont.spritefont
 
+#begin Font/GameFont1.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Font/GameFont1.spritefont
+
