@@ -34,7 +34,7 @@ namespace SpacePuzzleBobble
             // 1920, 1080 (16:9 Resolution)
             Window.Title = "UFO Khon Kaen";
             Window.AllowUserResizing= true;
-            //Window.IsBorderless= true;
+            Window.IsBorderless= true;
             _graphics.PreferredBackBufferWidth = Singleton.SCREENWIDTH;
             _graphics.PreferredBackBufferHeight = Singleton.SCREENHEIGHT;
             _graphics.ApplyChanges();
@@ -77,12 +77,12 @@ namespace SpacePuzzleBobble
 
             // Score
             KeyboardState keyboardState = Keyboard.GetState();
-            if (keyboardState.IsKeyDown(Keys.Space) && !Singleton.Instance.spacebarPressed)
+            if (keyboardState.IsKeyDown(Keys.Up) && !Singleton.Instance.spacebarPressed)
             {
                 Singleton.Instance.Score += 100;
                 Singleton.Instance.spacebarPressed = true;
             }
-            if (keyboardState.IsKeyUp(Keys.Space))
+            if (keyboardState.IsKeyUp(Keys.Up))
             {
                 Singleton.Instance.spacebarPressed = false;
             }
@@ -91,7 +91,7 @@ namespace SpacePuzzleBobble
             // TODO: Add your update logic here
             _crosshair.Update(gameTime);
             
-            //Singleton.Instance.PreviousKey = Singleton.Instance.CurrentKey;
+            Singleton.Instance.PreviousKey = Singleton.Instance.CurrentKey;
 
             base.Update(gameTime);
         }
@@ -154,10 +154,6 @@ namespace SpacePuzzleBobble
             /*8*/    {-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 }
             };
 
-            _crosshair = new Crosshair(_crosshairTexture)
-            {
-                Position = new Vector2(Singleton.SCREENWIDTH / 2, Singleton.SCREENHEIGHT)
-            };
 
             _bubbleNextOne = new Bubble(_bubbleTexture)
             {
@@ -171,6 +167,11 @@ namespace SpacePuzzleBobble
                 Position = new Vector2((Singleton.SCREENWIDTH / 2) - Singleton.TILESIZE * 3.6f, 
                             Singleton.TILESIZE * 12.3f),
                 Scale = new Vector2(0.28f, 0.28f)
+            };
+
+            _crosshair = new Crosshair(_crosshairTexture, _bubbleNextOne, _bubbleNextTwo)
+            {
+                Position = new Vector2(Singleton.SCREENWIDTH / 2, Singleton.SCREENHEIGHT)
             };
 
             _bubbleTable = new Bubble[Singleton.GAMEHEIGHT, Singleton.GAMEWIDTH];

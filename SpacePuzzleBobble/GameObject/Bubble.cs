@@ -8,7 +8,7 @@ namespace SpacePuzzleBobble.GameObject
 {
     class Bubble : GameObject
     {
-        Vector2 _tick, _pose, _direction;
+        public Vector2 _tick, _pose, _direction;
 
         public Texture2D[] _bubbleTexture;
 
@@ -36,6 +36,7 @@ namespace SpacePuzzleBobble.GameObject
 
         public Bubble(Texture2D[] texture) : base(texture[GetRandomColor()])
         {
+            _direction = Vector2.Zero;
             _bubbleTexture = texture;
         }
 
@@ -54,7 +55,6 @@ namespace SpacePuzzleBobble.GameObject
 
         public override void Update(GameTime gameTime)
         {
-
             base.Update(gameTime);
         }
 
