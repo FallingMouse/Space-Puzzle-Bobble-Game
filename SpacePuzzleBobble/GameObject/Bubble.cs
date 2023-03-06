@@ -13,7 +13,6 @@ namespace SpacePuzzleBobble.GameObject
         public Texture2D[] _bubbleTexture;
 
         public static int indexOne, indexTwo, priority = 1;
-        public int index1, index2;
 
         public bool IsBubbleNext;
         public bool IsHitTop; // Bobble Hit the Bobble or Ceiling
