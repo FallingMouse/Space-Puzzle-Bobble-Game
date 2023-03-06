@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SpacePuzzleBobble.GameObject;
+using static SpacePuzzleBobble.Singleton;
 
 namespace SpacePuzzleBobble
 {
@@ -89,6 +90,39 @@ namespace SpacePuzzleBobble
 
 
             // TODO: Add your update logic here
+            //update game state
+
+            switch (Singleton.Instance._currentGameState)
+            {
+                case Singleton.GameState.Playing:
+                    //if bubbles hit ground
+
+                    //change to pause state
+                    if (Singleton.Instance.CurrentKey.IsKeyDown(Keys.P) && !Singleton.Instance.CurrentKey.Equals(Singleton.Instance.PreviousKey))
+                    {
+                        Singleton.Instance._currentGameState = Singleton.GameState.Paused;
+                    }
+                    
+                   
+                    break;
+
+                case Singleton.GameState.Paused:
+                    //handled game pause
+                    if (Singleton.Instance.CurrentKey.IsKeyDown(Keys.P) && !Singleton.Instance.CurrentKey.Equals(Singleton.Instance.PreviousKey))
+                    {
+                        Singleton.Instance._currentGameState = Singleton.GameState.Playing;
+                    }
+                    break;
+
+                case Singleton.GameState.GameWon:
+                    //clear all bubbles - no bubbles left
+                    break;
+
+                case Singleton.GameState.GameOver: 
+                    //check if are there any availiable block left
+                    break;
+            }
+
             _crosshair.Update(gameTime);
             
             //Singleton.Instance.PreviousKey = Singleton.Instance.CurrentKey;
@@ -131,6 +165,26 @@ namespace SpacePuzzleBobble
                 }
             }
 
+            switch (Singleton.Instance._currentGameState)
+            {
+                case Singleton.GameState.Playing:
+
+                    break;
+
+                case Singleton.GameState.Paused:
+                    _spriteBatch.DrawString(_font, "Pause", new Vector2(Singleton.SCREENWIDTH / 2, Singleton.SCREENHEIGHT / 2), Color.White);
+
+                    break;
+
+                case Singleton.GameState.GameWon:
+                    
+                    break;
+
+                case Singleton.GameState.GameOver:
+                    
+                    break;
+            }
+
             _spriteBatch.End();
             _graphics.BeginDraw();
 
@@ -154,11 +208,16 @@ namespace SpacePuzzleBobble
             /*8*/    {-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 }
             };
 
+            //Set game state
+            Singleton.Instance._currentGameState = Singleton.GameState.Playing;
+
+            //Set crosshair position 
             _crosshair = new Crosshair(_crosshairTexture)
             {
                 Position = new Vector2(Singleton.SCREENWIDTH / 2, Singleton.SCREENHEIGHT)
             };
 
+            //Set position of current bubble to shoot and random the first one 
             _bubbleNextOne = new Bubble(_bubbleTexture)
             {
                 Position = new Vector2((Singleton.SCREENWIDTH / 2) - Singleton.TILESIZE * 1.40f,
@@ -166,13 +225,14 @@ namespace SpacePuzzleBobble
                 Scale = new Vector2(1/1.45f, 1/1.45f)
             };
 
+            //Set position of next bubble to shoot and random
             _bubbleNextTwo = new Bubble(_bubbleTexture)
             {
                 Position = new Vector2((Singleton.SCREENWIDTH / 2) - Singleton.TILESIZE * 3.6f, 
                             Singleton.TILESIZE * 12.3f),
                 Scale = new Vector2(0.28f, 0.28f)
             };
-
+            
             _bubbleTable = new Bubble[Singleton.GAMEHEIGHT, Singleton.GAMEWIDTH];
 
             for(int i = 0; i < Singleton.Instance.GameBoard.GetLength(0); i++)
@@ -195,7 +255,7 @@ namespace SpacePuzzleBobble
                     }
                 }
             }
-
+            
             Singleton.Instance.Score = 0;
         }
     }
