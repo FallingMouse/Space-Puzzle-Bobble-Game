@@ -8,7 +8,7 @@ namespace SpacePuzzleBobble.GameObject
 {
     class Bubble : GameObject
     {
-        public Vector2 _tick, _pose, _direction;
+        public Vector2 _tick, _direction;
 
         public Texture2D[] _bubbleTexture;
 
@@ -31,11 +31,15 @@ namespace SpacePuzzleBobble.GameObject
         // override
         public Bubble(Texture2D texture) : base(texture)
         {
-
+            IsHitTop = false;
+            IsDead = false;
+            _direction = Vector2.Zero;
         }
 
         public Bubble(Texture2D[] texture) : base(texture[GetRandomColor()])
         {
+            IsHitTop = false;
+            IsDead = false;
             _direction = Vector2.Zero;
             _bubbleTexture = texture;
         }
@@ -55,6 +59,21 @@ namespace SpacePuzzleBobble.GameObject
 
         public override void Update(GameTime gameTime)
         {
+            // Bubble Move
+            Position += _direction;
+
+            // Bubble Hit Table
+            if (Position.X <= Singleton.TILESIZE * 11 ||
+                Position.X >= Singleton.TILESIZE * 18)
+            {
+                _direction.X *= -1;
+            }
+            if (Position.Y <= Singleton.TILESIZE)
+            {
+                _direction = Vector2.Zero;
+                IsHitTop = true;
+            }
+
             base.Update(gameTime);
         }
 

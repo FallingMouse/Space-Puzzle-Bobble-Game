@@ -90,7 +90,8 @@ namespace SpacePuzzleBobble
 
             // TODO: Add your update logic here
             _crosshair.Update(gameTime);
-            
+            _bubbleNextOne.Update(gameTime);
+
             Singleton.Instance.PreviousKey = Singleton.Instance.CurrentKey;
 
             base.Update(gameTime);
