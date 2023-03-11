@@ -9,13 +9,14 @@ namespace SpacePuzzleBobble.GameObject
     class Bubble : GameObject
     {
         public Vector2 _tick, _direction;
+        public int color;
 
         public Texture2D[] _bubbleTexture;
 
-        public static int indexOne, indexTwo, priority = 1;
+        //public static int indexOne, indexTwo, priority = 1;
 
-        public bool IsHitTop; // Bobble Hit the Bobble or Ceiling
-        public bool IsDead; // Bobble Hit Floor
+        public bool IsHitTop; // Bubble Hit the Bubble or Ceiling
+        public bool IsDead; // Bubble Hit Floor
 
         public enum BubbleType
         {
@@ -54,6 +55,33 @@ namespace SpacePuzzleBobble.GameObject
         {
             // Maybe will use this to link between _bubbleNextOne and _bubbleNextTwo
             // Then we can use this in MainScene.cs like Tetris Lab
+
+
+            //Random the colour of bubble -> called by MainScene.Update()
+            color = 0;
+            CurrentBubbleType = (BubbleType)(Singleton.Instance.Random.Next((int)BubbleType.SIZE));
+
+            switch (CurrentBubbleType)
+            {
+                case BubbleType.Red:
+                    color = 0;
+                    break;
+                case BubbleType.Blue:
+                    color = 1;
+                    break;
+                case BubbleType.Green:
+                    color = 2;
+                    break;
+                case BubbleType.Yellow:
+                    color = 3;
+                    break;
+                case BubbleType.Pink:
+                    color = 4;
+                    break;
+            }
+            //index = indexOne;
+            //return color;
+
             base.Reset();
         }
 
@@ -71,12 +99,24 @@ namespace SpacePuzzleBobble.GameObject
             if (Position.Y <= Singleton.TILESIZE)
             {
                 _direction = Vector2.Zero;
+
+                if (CheckHit())
+                {
+                    IsHitTop = true;
+                }
+            }
+
+            /*
+            if (CheckHit())
+            {
                 IsHitTop = true;
             }
+            */
 
             base.Update(gameTime);
         }
 
+        /*
         public static int GetRandomColor()
         {
             int index = 0;
@@ -135,6 +175,68 @@ namespace SpacePuzzleBobble.GameObject
             
             return index;
         }
+        */
 
-    }
+        //test if it can use only 1 switch-case
+        public static int GetRandomColor()
+        {
+            int index = 0;
+            CurrentBubbleType = (BubbleType)(Singleton.Instance.Random.Next((int)BubbleType.SIZE));
+
+                switch (CurrentBubbleType)
+                {
+                    case BubbleType.Red:
+                        index = 0;
+                        break;
+                    case BubbleType.Blue:
+                        index = 1;
+                        break;
+                    case BubbleType.Green:
+                        index = 2;
+                        break;
+                    case BubbleType.Yellow:
+                        index = 3;
+                        break;
+                    case BubbleType.Pink:
+                        index = 4;
+                        break;
+                }
+                //index = indexOne;
+            return index;
+        }
+
+        private bool CheckHit()
+        {
+            bool isHisTop = false;
+
+            if(Position.Y / Singleton.TILESIZE < Singleton.GAMEHEIGHT && 
+               Position.Y / Singleton.TILESIZE >= 0)
+            {
+                //collision occur -> hit the  top
+                isHisTop = true;
+            }
+            else if(Position.Y / Singleton.TILESIZE > Singleton.GAMEHEIGHT)
+            {
+                //game over
+            }
+
+            //still have an exception
+            /*
+            else if (Singleton.Instance.GameBoard[ (int)Position.Y / Singleton.TILESIZE, 
+                        (int)Position.X / Singleton.TILESIZE] != -1)
+            {
+                //collision occur -> hit other bubble
+                isHisTop = true;
+            }*/
+
+            return isHisTop;
+        }
+
+    private bool CheckDead()
+        {
+            bool isDead = false;
+
+            return isDead;
+        }
+    } //class
 }

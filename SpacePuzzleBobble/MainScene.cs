@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SpacePuzzleBobble.GameObject;
+using System.Collections.Generic;
 
 namespace SpacePuzzleBobble
 {
@@ -21,6 +22,12 @@ namespace SpacePuzzleBobble
         Texture2D[] _bubbleTexture;
 
         SpriteFont _font;
+
+        //test collision (never use so far)
+        public Vector2 _currentBubblePosition;
+        static Bubble[] _collisionBubble;
+        //Bubble _currentBubble;
+        //************************
 
         public MainScene()
         {
@@ -94,6 +101,30 @@ namespace SpacePuzzleBobble
 
             Singleton.Instance.PreviousKey = Singleton.Instance.CurrentKey;
 
+            //test change to next bubble, when the first one was shooted
+            //actually this action MUST be in game state, but have to check if it's work
+            //so  I was coding it down here
+            if (_bubbleNextOne.IsDead)
+            {
+                //Reset();
+            }
+            else if (_bubbleNextOne.IsHitTop)
+            {
+                _bubbleNextOne = _bubbleNextTwo;
+                _bubbleNextOne.Position = new Vector2((Singleton.SCREENWIDTH / 2) - Singleton.TILESIZE * 1.40f,
+                            (Singleton.TILESIZE * 11) + Singleton.TILESIZE / 8f);
+                _bubbleNextOne.Scale = new Vector2(1 / 1.45f, 1 / 1.45f);
+
+                _bubbleNextTwo = new Bubble(_bubbleTexture)
+                {
+                    Position = new Vector2((Singleton.SCREENWIDTH / 2) - Singleton.TILESIZE * 3.6f,
+                            Singleton.TILESIZE * 12.3f),
+                    Scale = new Vector2(0.28f, 0.28f)
+                };
+
+                _bubbleNextTwo.Reset();
+            }
+
             base.Update(gameTime);
         }
 
@@ -132,6 +163,20 @@ namespace SpacePuzzleBobble
                 }
             }
 
+            //did'n work (still have error)
+            //do not delete until we can solve this problem
+            /*
+            for (int i = 0; i < Singleton.GAMEWIDTH; i++)
+            {
+                for (int j = 0; j < Singleton.GAMEHEIGHT; j++)
+                {
+                    if (Singleton.Instance.GameBoard[j, i] == -1)
+                    {
+                       _spriteBatch.Draw(_rectTestTexture, new Vector2(i * Singleton.TILESIZE, j * Singleton.TILESIZE), Color.White);
+                    }
+                }
+            }*/
+
             _spriteBatch.End();
             _graphics.BeginDraw();
 
@@ -155,6 +200,8 @@ namespace SpacePuzzleBobble
             /*8*/    {-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 }
             };
 
+            //current playing bubble
+            _currentBubblePosition = new Vector2(Singleton.GAMEHEIGHT * Singleton.TILESIZE, Singleton.GAMEWIDTH * Singleton.TILESIZE);
 
             _bubbleNextOne = new Bubble(_bubbleTexture)
             {
@@ -163,12 +210,16 @@ namespace SpacePuzzleBobble
                 Scale = new Vector2(1/1.45f, 1/1.45f)
             };
 
+            _bubbleNextOne.Reset();
+
             _bubbleNextTwo = new Bubble(_bubbleTexture)
             {
                 Position = new Vector2((Singleton.SCREENWIDTH / 2) - Singleton.TILESIZE * 3.6f, 
                             Singleton.TILESIZE * 12.3f),
                 Scale = new Vector2(0.28f, 0.28f)
             };
+
+            _bubbleNextTwo.Reset();
 
             _crosshair = new Crosshair(_crosshairTexture, _bubbleNextOne, _bubbleNextTwo)
             {
@@ -197,6 +248,13 @@ namespace SpacePuzzleBobble
                     }
                 }
             }
+           
+            //changeing to next bubble
+            //should be in game state "Playing"
+            /*
+            _bubbleNextOne = _bubbleNextTwo;
+            _bubbleNextTwo = new Bubble(_bubbleTexture);
+            */
 
             Singleton.Instance.Score = 0;
         }
