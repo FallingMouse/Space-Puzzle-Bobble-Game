@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -117,5 +118,30 @@ namespace SpacePuzzleBobble.GameObject
             return index;
         }
 
-    }
+        private bool CheckDead()
+        {
+            bool isDead = false;
+
+            /*for ()
+            {
+                //is there any space left
+                if ()
+                {
+
+                }
+                
+            }*/
+
+            return isDead;
+        }
+
+        private bool CheckHit()
+        {
+            bool isHisTop = false;
+
+            //do some code
+
+            return isHisTop;
+        }
+    } //class 
 }

@@ -96,9 +96,32 @@ namespace SpacePuzzleBobble
             {
                 case Singleton.GameState.Playing:
                     //if bubbles hit ground
+                    _bubbleNextOne.Update(gameTime);
+
                     if(_bubbleNextOne.IsDead)
                     {
-                        Singleton.Instance._currentGameState= Singleton.GameState.GameOver;
+                        Singleton.Instance._currentGameState = Singleton.GameState.GameOver;
+                    }else if (_bubbleNextOne.IsHitTop)
+                    {
+                        //Check if the bubble can broke
+
+                        //Check if win
+                        //clear all bubbles - no bubbles left
+
+                        for (int i = 0; i < 1; i++)
+                        {
+                            for (int j = 0; j < 8; j++)
+                            {
+                                if (Singleton.Instance.GameBoard[j, i] == -1)
+                                {
+                                    //check every index is equals -1, if then player won
+                                    //Singleton.Instance._currentGameState = Singleton.GameState.GameWon;
+                                }
+                            }
+                        }
+
+                        //change bubble
+
                     }
 
                     //change to pause state
@@ -119,7 +142,7 @@ namespace SpacePuzzleBobble
                     break;
 
                 case Singleton.GameState.GameWon:
-                    //clear all bubbles - no bubbles left
+                  
                     break;
 
                 case Singleton.GameState.GameOver: 
