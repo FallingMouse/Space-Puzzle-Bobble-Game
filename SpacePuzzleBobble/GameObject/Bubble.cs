@@ -8,8 +8,8 @@ namespace SpacePuzzleBobble.GameObject
 {
     class Bubble : GameObject
     {
-        public Vector2 _tick, _direction;
-        public int color;
+        public Vector2 _tick, _direction, _positionBubble;
+        public int color, fy, fx;
 
         public Texture2D[] _bubbleTexture;
 
@@ -56,7 +56,6 @@ namespace SpacePuzzleBobble.GameObject
             // Maybe will use this to link between _bubbleNextOne and _bubbleNextTwo
             // Then we can use this in MainScene.cs like Tetris Lab
 
-
             //Random the colour of bubble -> called by MainScene.Update()
             color = 0;
             CurrentBubbleType = (BubbleType)(Singleton.Instance.Random.Next((int)BubbleType.SIZE));
@@ -100,82 +99,29 @@ namespace SpacePuzzleBobble.GameObject
             {
                 _direction = Vector2.Zero;
 
-                if (CheckHit())
+                DetectCollision();
+                Position = _positionBubble;
+
+                //IsHitTop = true;
+
+                /*if (CheckHit())
                 {
                     IsHitTop = true;
-                }
+                }*/
             }
-
-            /*
-            if (CheckHit())
-            {
-                IsHitTop = true;
-            }
-            */
 
             base.Update(gameTime);
         }
-
-        /*
-        public static int GetRandomColor()
+        public void DetectCollision()
         {
-            int index = 0;
-            if (priority == 1) { 
+            fy = (int)(Position.Y - Singleton.TILESIZE + (Singleton.TILESIZE / 2)) / Singleton.TILESIZE;
+            fx = (int)((Position.X - (Singleton.TILESIZE * 11) + (Singleton.TILESIZE / 2) - ((fy % 2) * (Singleton.TILESIZE / 2))) / Singleton.TILESIZE);
+            //_positionBubble = new Vector2(fx, fy);
             
-                CurrentBubbleType = (BubbleType)(Singleton.Instance.Random.Next((int)BubbleType.SIZE));
-            
-                switch (CurrentBubbleType)
-                {
-                    case BubbleType.Red:
-                        indexOne = 0;
-                        break;
-                    case BubbleType.Blue:
-                        indexOne = 1;
-                        break;
-                    case BubbleType.Green:
-                        indexOne = 2;
-                        break;
-                    case BubbleType.Yellow:
-                        indexOne = 3;
-                        break;
-                    case BubbleType.Pink:
-                        indexOne = 4;
-                        break;
-                }
-                index = indexOne;
-            }
-
-            else if (priority == 2)
-            {
-
-                CurrentBubbleType = (BubbleType)(Singleton.Instance.Random.Next((int)BubbleType.SIZE));
-
-                switch (CurrentBubbleType)
-                {
-                    case BubbleType.Red:
-                        indexTwo = 0;
-                        break;
-                    case BubbleType.Blue:
-                        indexTwo = 1;
-                        break;
-                    case BubbleType.Green:
-                        indexTwo = 2;
-                        break;
-                    case BubbleType.Yellow:
-                        indexTwo = 3;
-                        break;
-                    case BubbleType.Pink:
-                        indexTwo = 4;
-                        break;
-                }
-                index = indexTwo;
-                priority = 0;
-            } 
-            priority++;
-            
-            return index;
+            Rectangle boundary = new Rectangle((fx * Singleton.TILESIZE) + (Singleton.TILESIZE * 11) + ((fy % 2) * (Singleton.TILESIZE / 2)),
+                            (int)(fy * Singleton.TILESIZE) + Singleton.TILESIZE, Singleton.TILESIZE, Singleton.TILESIZE);
+            _positionBubble = new Vector2(boundary.X, boundary.Y);
         }
-        */
 
         //test if it can use only 1 switch-case
         public static int GetRandomColor()

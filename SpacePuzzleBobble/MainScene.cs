@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SpacePuzzleBobble.GameObject;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace SpacePuzzleBobble
 {
@@ -57,7 +58,7 @@ namespace SpacePuzzleBobble
             _backgroundTexture = this.Content.Load<Texture2D>("Background/background");
             _crosshairTexture = this.Content.Load<Texture2D>("Crosshair/crosshair");
 
-            _bubbleTexture = new Texture2D[5];
+            _bubbleTexture = new Texture2D[6];
             _bubbleTexture[0] = this.Content.Load<Texture2D>("Bubble/red");
             _bubbleTexture[1] = this.Content.Load<Texture2D>("Bubble/blue");
             _bubbleTexture[2] = this.Content.Load<Texture2D>("Bubble/green");
@@ -69,6 +70,7 @@ namespace SpacePuzzleBobble
             Color[] data = new Color[1];
             for(int i = 0; i< data.Length; i++) data[i] = Color.White;
             _rectTestTexture.SetData(data);
+            _bubbleTexture[5] = _rectTestTexture;
 
             _font = Content.Load<SpriteFont>("Font/GameFont");
 
@@ -110,7 +112,13 @@ namespace SpacePuzzleBobble
             }
             else if (_bubbleNextOne.IsHitTop)
             {
+                // Update Bubble Table
+                Singleton.Instance.GameBoard[_bubbleNextOne.fx, _bubbleNextOne.fy] = _bubbleNextOne.color;
+                //_bubbleTable[_bubbleNextOne.boundary.X, _bubbleNextOne.boundary.Y] = _bubbleNextOne;
+                
+                // Make Bubble in Monitor Continue
                 _bubbleNextOne = _bubbleNextTwo;
+
                 _bubbleNextOne.Position = new Vector2((Singleton.SCREENWIDTH / 2) - Singleton.TILESIZE * 1.40f,
                             (Singleton.TILESIZE * 11) + Singleton.TILESIZE / 8f);
                 _bubbleNextOne.Scale = new Vector2(1 / 1.45f, 1 / 1.45f);
@@ -184,21 +192,17 @@ namespace SpacePuzzleBobble
         }
 
         protected void Reset()
-        {
+        { 
             //Starting pattern bubbles
-            Singleton.Instance.GameBoard = new int[Singleton.GAMEHEIGHT, Singleton.GAMEWIDTH]
+            Singleton.Instance.GameBoard = new int[Singleton.GAMEHEIGHT, Singleton.GAMEWIDTH];
+
+            for(int i = 0; i < Singleton.GAMEHEIGHT; i++)
             {
-            /*        0    1   2  3   4   5   6   7  */
-            /*0*/    {0   ,0 , 1 ,1  ,2  ,2  ,3  ,3  },
-            /*1*/    {0   ,0 , 1 ,1  ,2  ,2  ,3  ,-1  },
-            /*2*/    {1   ,1 , 2 ,2  ,3  ,3  ,0  ,0  },
-            /*3*/    {1   ,1 , 2 ,2  ,3  ,3  ,0  ,-1  },
-            /*4*/    {-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 },
-            /*5*/    {-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 },
-            /*6*/    {-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 },
-            /*7*/    {-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 },
-            /*8*/    {-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 }
-            };
+                for(int j = 0; j < Singleton.GAMEWIDTH; j++)
+                {
+                    Singleton.Instance.GameBoard[i, j] = 5;
+                }
+            }
 
             //current playing bubble
             _currentBubblePosition = new Vector2(Singleton.GAMEHEIGHT * Singleton.TILESIZE, Singleton.GAMEWIDTH * Singleton.TILESIZE);
@@ -228,7 +232,8 @@ namespace SpacePuzzleBobble
 
             _bubbleTable = new Bubble[Singleton.GAMEHEIGHT, Singleton.GAMEWIDTH];
 
-            for(int i = 0; i < Singleton.Instance.GameBoard.GetLength(0); i++)
+            // Bubble Table
+            for (int i = 0; i < Singleton.Instance.GameBoard.GetLength(0); i++)
             {
                 for (int j = 0; j < Singleton.Instance.GameBoard.GetLength(1); j++)
                 {
@@ -239,16 +244,13 @@ namespace SpacePuzzleBobble
                     {
                         _bubbleTable[i, j] = new Bubble(_bubbleTexture[Singleton.Instance.GameBoard[i, j]])
                         {
-                            
                             Position = new Vector2(_rectTable.X, _rectTable.Y),
-                            // Old Position(not in table)
-                            //Position = new Vector2(Singleton.TILESIZE * j + 703, Singleton.TILESIZE * i + Singleton.TILESIZE),
                             Scale = new Vector2(0.25f, 0.25f)
                         };
                     }
                 }
             }
-           
+
             //changeing to next bubble
             //should be in game state "Playing"
             /*
