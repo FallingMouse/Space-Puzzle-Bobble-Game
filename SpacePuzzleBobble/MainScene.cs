@@ -120,6 +120,10 @@ namespace SpacePuzzleBobble
             _spriteBatch.DrawString(_font1, "SCORE", new Vector2(270, 858), Color.White, rotationScore1, _font1.MeasureString("SCORE") / 2f, 1f, SpriteEffects.None, 0f);
             _spriteBatch.DrawString(_font2, Singleton.Instance.Score.ToString("D6"), new Vector2(245, 905), Color.White, rotationScore2, _font1.MeasureString("SCORE") / 2f, 1f, SpriteEffects.None, 0f);
 
+            // Draw CountDown
+            float rotationCountDown = MathHelper.ToRadians(12.0f);
+            _spriteBatch.DrawString(_font2, "60", new Vector2(1530, 870), Color.White, rotationCountDown, _font2.MeasureString("60") / 2f, 1f, SpriteEffects.None, 0f);
+
             // Draw Crosshair
             _crosshair.Draw(_spriteBatch);
 
