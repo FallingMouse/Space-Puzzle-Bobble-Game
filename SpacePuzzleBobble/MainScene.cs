@@ -20,7 +20,7 @@ namespace SpacePuzzleBobble
         Texture2D _backgroundTexture, _rectTestTexture, _crosshairTexture;
         Texture2D[] _bubbleTexture;
 
-        SpriteFont _font;
+        SpriteFont _font2;
         SpriteFont _font1;
 
         public MainScene()
@@ -64,7 +64,7 @@ namespace SpacePuzzleBobble
             for(int i = 0; i< data.Length; i++) data[i] = Color.White;
             _rectTestTexture.SetData(data);
 
-            _font = Content.Load<SpriteFont>("Font/GameFont");
+            _font2 = Content.Load<SpriteFont>("Font/GameFont2");
             _font1 = Content.Load<SpriteFont>("Font/GameFont1");
 
             Reset();
@@ -115,10 +115,10 @@ namespace SpacePuzzleBobble
             //_spriteBatch.DrawString(_font, Singleton.Instance.Score.ToString("D6"), new Vector2(179, 900), Color.White);
 
             // Draw Score
-            float rotationScore1 = MathHelper.ToRadians(-11.2f);
+            float rotationScore1 = MathHelper.ToRadians(-12.2f);
             float rotationScore2 = MathHelper.ToRadians(-13.8f);
-            _spriteBatch.DrawString(_font1, "SCORE", new Vector2(278, 858), Color.White, rotationScore1, _font1.MeasureString("SCORE") / 2f, 1f, SpriteEffects.None, 0f);
-            _spriteBatch.DrawString(_font, Singleton.Instance.Score.ToString("D6"), new Vector2(245, 905), Color.White, rotationScore2, _font1.MeasureString("SCORE") / 2f, 1f, SpriteEffects.None, 0f);
+            _spriteBatch.DrawString(_font1, "SCORE", new Vector2(270, 858), Color.White, rotationScore1, _font1.MeasureString("SCORE") / 2f, 1f, SpriteEffects.None, 0f);
+            _spriteBatch.DrawString(_font2, Singleton.Instance.Score.ToString("D6"), new Vector2(245, 905), Color.White, rotationScore2, _font1.MeasureString("SCORE") / 2f, 1f, SpriteEffects.None, 0f);
 
             // Draw Crosshair
             _crosshair.Draw(_spriteBatch);
