@@ -58,7 +58,7 @@ namespace SpacePuzzleBobble.GameObject
 
             //Random the colour of bubble -> called by MainScene.Update()
             color = 0;
-            CurrentBubbleType = (BubbleType)(Singleton.Instance.Random.Next((int)BubbleType.SIZE));
+            //CurrentBubbleType = (BubbleType)(Singleton.Instance.Random.Next((int)BubbleType.SIZE));
 
             switch (CurrentBubbleType)
             {
@@ -102,7 +102,7 @@ namespace SpacePuzzleBobble.GameObject
                 DetectCollision();
                 Position = _positionBubble;
 
-                //IsHitTop = true;
+                IsHitTop = true;
 
                 /*if (CheckHit())
                 {
@@ -116,7 +116,6 @@ namespace SpacePuzzleBobble.GameObject
         {
             fy = (int)(Position.Y - Singleton.TILESIZE + (Singleton.TILESIZE / 2)) / Singleton.TILESIZE;
             fx = (int)((Position.X - (Singleton.TILESIZE * 11) + (Singleton.TILESIZE / 2) - ((fy % 2) * (Singleton.TILESIZE / 2))) / Singleton.TILESIZE);
-            //_positionBubble = new Vector2(fx, fy);
             
             Rectangle boundary = new Rectangle((fx * Singleton.TILESIZE) + (Singleton.TILESIZE * 11) + ((fy % 2) * (Singleton.TILESIZE / 2)),
                             (int)(fy * Singleton.TILESIZE) + Singleton.TILESIZE, Singleton.TILESIZE, Singleton.TILESIZE);

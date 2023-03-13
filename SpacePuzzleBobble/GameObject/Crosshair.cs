@@ -9,24 +9,22 @@ namespace SpacePuzzleBobble.GameObject
     {
         private Texture2D _bobbleTexture;
         
-        private Bubble _bubbleNextOne, _bubbleNextTwo;
+        private Bubble _bubbleNext, _bubbleNextTwo;
 
         private float _elapsedTime;
 
-        public Crosshair(Texture2D texture, Bubble _bubbleNextOne, Bubble _bubbleNextTwo) : base(texture)
+        public Crosshair(Texture2D texture, Bubble _bubbleNext, Bubble _bubbleNextTwo) : base(texture)
         {
-            this._bubbleNextOne = _bubbleNextOne;
-            this._bubbleNextTwo = _bubbleNextTwo;
+            this._bubbleNext = _bubbleNext;
             _elapsedTime = 0f;
         }
-
+        
         public override void Update(GameTime gameTime)
         {
             // Elapsed Time
             _elapsedTime += gameTime.ElapsedGameTime.Ticks / (float)TimeSpan.TicksPerSecond;
 
             // Crosshair Move
-            //if (_elapsedTime > 0.03f && rotation > -0.45f && rotation < 0.45f)
             if (_elapsedTime > 0.03f && Rotation > -0.45f && Rotation < 0.45f)
             {
                 if (Singleton.Instance.CurrentKey.IsKeyDown(Keys.Left) || Singleton.Instance.CurrentKey.IsKeyDown(Keys.A))
@@ -43,20 +41,23 @@ namespace SpacePuzzleBobble.GameObject
             else if (Rotation <= -0.44f) Rotation = -0.44f;
 
             /*if (Singleton.Instance.isShooting)
-                _bubbleNextOne.Update(gameTime);*/
+                _bubbleNext.Update(gameTime);*/
             if (Singleton.Instance.CurrentKey.IsKeyDown(Keys.Space) && !Singleton.Instance.CurrentKey.Equals(Singleton.Instance.PreviousKey))
             {
                 //Singleton.Instance.isShooting = true;
 
-                _bubbleNextOne.Position = new Vector2(Singleton.SCREENWIDTH / 2 - Singleton.TILESIZE / 2, Singleton.SCREENHEIGHT);
-                _bubbleNextOne.Scale = new Vector2(0.25f, 0.25f);
+                _bubbleNext.Position = new Vector2(Singleton.SCREENWIDTH / 2 - Singleton.TILESIZE / 2, Singleton.SCREENHEIGHT);
+                _bubbleNext.Scale = new Vector2(0.25f, 0.25f);
 
                 Matrix m = new Matrix();
                 m = Matrix.CreateRotationZ(Rotation);
-                _bubbleNextOne._direction.X += m.M12 * 25f; //default = 20f
-                _bubbleNextOne._direction.Y -= m.M11 * 25f;
+                _bubbleNext._direction.X += m.M12 * 25f; //default = 20f
+                _bubbleNext._direction.Y -= m.M11 * 25f;
 
-                _bubbleNextOne.Update(gameTime);
+                _bubbleNext.Update(gameTime);
+
+                //_bubbleNext = _bubbleNextTwo;
+                
             }
 
 
@@ -65,9 +66,6 @@ namespace SpacePuzzleBobble.GameObject
 
         public override void Draw(SpriteBatch spriteBatch)
         {   
-            // Next Bubble 1 Position
-            //spriteBatch.Draw(_texture, new Vector2(897, 743), null, Color.White, rotation,)
-
             spriteBatch.Draw(_texture, Position, null, Color.White, Rotation, 
                             new Vector2(_texture.Width/2, _texture.Height), 1f, SpriteEffects.None, 0);
 
@@ -84,6 +82,11 @@ namespace SpacePuzzleBobble.GameObject
         {
 
             base.Reset();
+        }
+
+        public void setBubbleNextOne(Bubble _bubbleNext)
+        {
+            this._bubbleNext = _bubbleNext;
         }
     }
 }

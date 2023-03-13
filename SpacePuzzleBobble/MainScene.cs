@@ -24,12 +24,6 @@ namespace SpacePuzzleBobble
 
         SpriteFont _font;
 
-        //test collision (never use so far)
-        public Vector2 _currentBubblePosition;
-        static Bubble[] _collisionBubble;
-        //Bubble _currentBubble;
-        //************************
-
         public MainScene()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -96,12 +90,9 @@ namespace SpacePuzzleBobble
                 Singleton.Instance.spacebarPressed = false;
             }
 
-
             // TODO: Add your update logic here
             _crosshair.Update(gameTime);
             _bubbleNextOne.Update(gameTime);
-
-            Singleton.Instance.PreviousKey = Singleton.Instance.CurrentKey;
 
             //test change to next bubble, when the first one was shooted
             //actually this action MUST be in game state, but have to check if it's work
@@ -114,10 +105,11 @@ namespace SpacePuzzleBobble
             {
                 // Update Bubble Table
                 Singleton.Instance.GameBoard[_bubbleNextOne.fx, _bubbleNextOne.fy] = _bubbleNextOne.color;
-                //_bubbleTable[_bubbleNextOne.boundary.X, _bubbleNextOne.boundary.Y] = _bubbleNextOne;
+                _bubbleTable[_bubbleNextOne.fx, _bubbleNextOne.fy] = _bubbleNextOne;
                 
-                // Make Bubble in Monitor Continue
+                // Change Bubble to next Bubble
                 _bubbleNextOne = _bubbleNextTwo;
+                _crosshair.setBubbleNextOne(_bubbleNextOne);  //change color in Crosshair.cs
 
                 _bubbleNextOne.Position = new Vector2((Singleton.SCREENWIDTH / 2) - Singleton.TILESIZE * 1.40f,
                             (Singleton.TILESIZE * 11) + Singleton.TILESIZE / 8f);
@@ -132,6 +124,8 @@ namespace SpacePuzzleBobble
 
                 _bubbleNextTwo.Reset();
             }
+
+            Singleton.Instance.PreviousKey = Singleton.Instance.CurrentKey;
 
             base.Update(gameTime);
         }
@@ -160,30 +154,10 @@ namespace SpacePuzzleBobble
             {
                 for (int j = 0; j < Singleton.Instance.GameBoard.GetLength(1); j++)
                 {
-                    // Red Table
-                    /*Rectangle _rectTable = new Rectangle((j * Singleton.TILESIZE) + (Singleton.TILESIZE * 11) + ((i % 2) * (Singleton.TILESIZE / 2)),
-                                                    (int)i * Singleton.TILESIZE + (Singleton.TILESIZE), Singleton.TILESIZE, Singleton.TILESIZE);
-                    _spriteBatch.Draw(_rectTestTexture, new Rectangle(_rectTable.X, _rectTable.Y, Singleton.TILESIZE, 1), new Color(Color.Red, 100));
-                    _spriteBatch.Draw(_rectTestTexture, new Rectangle(_rectTable.X, _rectTable.Y, 1, Singleton.TILESIZE), new Color(Color.Red, 100));*/
-
                     if (_bubbleTable[i,j] != null)
                         _bubbleTable[i, j].Draw(_spriteBatch);
                 }
             }
-
-            //did'n work (still have error)
-            //do not delete until we can solve this problem
-            /*
-            for (int i = 0; i < Singleton.GAMEWIDTH; i++)
-            {
-                for (int j = 0; j < Singleton.GAMEHEIGHT; j++)
-                {
-                    if (Singleton.Instance.GameBoard[j, i] == -1)
-                    {
-                       _spriteBatch.Draw(_rectTestTexture, new Vector2(i * Singleton.TILESIZE, j * Singleton.TILESIZE), Color.White);
-                    }
-                }
-            }*/
 
             _spriteBatch.End();
             _graphics.BeginDraw();
@@ -203,9 +177,6 @@ namespace SpacePuzzleBobble
                     Singleton.Instance.GameBoard[i, j] = 5;
                 }
             }
-
-            //current playing bubble
-            _currentBubblePosition = new Vector2(Singleton.GAMEHEIGHT * Singleton.TILESIZE, Singleton.GAMEWIDTH * Singleton.TILESIZE);
 
             _bubbleNextOne = new Bubble(_bubbleTexture)
             {

@@ -34,7 +34,6 @@ namespace SpacePuzzleBobble
 
         public enum GameState
         {
-            Idle, // Default state
             Playing,
             Paused,
             GameWon,
