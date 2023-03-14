@@ -8,11 +8,10 @@ namespace SpacePuzzleBobble.GameObject
 {
     class Bubble : GameObject
     {
-        public List<Bubble> neighbor, groupNeighbor;
+        public List<Bubble> neighbor, groupNeighbor, FallingBubble;
         public Vector2 _tick, _direction, _positionBox,_positionBubble;
         public int color, fy, fx;
         public static int index;
-        public static int indexOne, indexTwo, priority = 1;
 
         //test
         public Vector2 tmpPosition = Vector2.Zero;
@@ -34,6 +33,7 @@ namespace SpacePuzzleBobble.GameObject
             Green,
             Yellow,
             Pink,
+            Blank,
             SIZE
         }
         public static BubbleType CurrentBubbleType;
@@ -86,6 +86,9 @@ namespace SpacePuzzleBobble.GameObject
                 case BubbleType.Pink:
                     color = 4;
                     break;
+                case BubbleType.Blank:
+                    color = 5;
+                    break;
             }
             //index = indexOne;
             //return color;
@@ -111,7 +114,6 @@ namespace SpacePuzzleBobble.GameObject
                 _direction = Vector2.Zero;
 
                 DetectCollision();
-                //Position = _positionBubble;
 
                 IsHitTop = true;
 
@@ -135,8 +137,10 @@ namespace SpacePuzzleBobble.GameObject
                                 //_direction = Vector2.Zero;
 
                                 DetectCollision();
-                                //Position = _positionBubble; // Move to DetectCollision()
+                                PasteBubble(Singleton.Instance._bubbleTable[i, j]);
 
+                                //Singleton.Instance._bubbleTable[i, j] = new Bubble(_bubbleTexture[5]);
+                                
                                 IsHitTop = true;
                             }
                         }
@@ -158,10 +162,6 @@ namespace SpacePuzzleBobble.GameObject
             Rectangle boundary = new Rectangle((fx * Singleton.TILESIZE) + (Singleton.TILESIZE * 11) + ((fy % 2) * (Singleton.TILESIZE / 2)),
                             (int)(fy * Singleton.TILESIZE) + Singleton.TILESIZE, Singleton.TILESIZE, Singleton.TILESIZE);
             _positionBubble = new Vector2(boundary.X, boundary.Y);
-            //Singleton.Instance._bubbleTable[fx, fy] = this;
-            //Singleton.Instance._bubbleTable[fx, fy] = this;
-            //Singleton.Instance.GameBoard[fx, fy] = 0; // Not Equal -1
-            //Singleton.Instance._bubbleTable[fx, fy].Position = _positionBubble;
 
             Singleton.Instance.GameBoard[fy, fx] = color; // Not Equal -1 but it's not _bubbleTexture
             Singleton.Instance._bubbleTable[fy, fx] = this;
@@ -184,7 +184,6 @@ namespace SpacePuzzleBobble.GameObject
             tmpPosition = _bubbleTable.Position;
             dxTmp = dx;
             dyTmp = dy;
-
 
             if (distance <= radiusE)
             {
@@ -250,7 +249,7 @@ namespace SpacePuzzleBobble.GameObject
         public List<Bubble> FindSameColor()
         {
             List<Bubble> SameColor = new List<Bubble>();
-            SameColor.Add(this);
+            SameColor.Add(this); // Add itself(_bubbleTable[itself, itself])
             this.CanDestroy = true;
 
             FindSameColor(SameColor, this);
@@ -269,6 +268,94 @@ namespace SpacePuzzleBobble.GameObject
                     FindSameColor(SameColor, _bubble);
                 }
             }
+        }
+
+        public List<Bubble> FindConnectedBubble()
+        {
+            List<Bubble> ConnectedBubble = new List<Bubble>();
+            ConnectedBubble.Add(this);
+            FindConnectedBubble(ConnectedBubble, this);
+
+            return ConnectedBubble;
+        }
+        public void FindConnectedBubble(List<Bubble> ConnectedBubble, Bubble bubble)
+        {
+            bubble.FindNeighbor();
+            foreach(Bubble _bubble in bubble.neighbor)
+            {
+                if(!_bubble.CanDestroy && !ConnectedBubble.Contains(_bubble))
+                {
+                    ConnectedBubble.Add(_bubble);
+                    if (_bubble._positionBox.Y == 0) break;
+                    FindConnectedBubble(ConnectedBubble, _bubble);
+                }
+            }
+        }
+
+        public void PasteBubble(Bubble bubble)
+        {
+            List<Bubble> groupSameBubble = bubble.FindSameColor();
+            List<Bubble> floatingBubble = new List<Bubble>();
+            List<Bubble> connectedBubble = new List<Bubble>();
+
+            if (groupSameBubble.Count >= 3)
+            {
+                //do else 
+                FallingBubble = groupSameBubble;
+
+                for (int i = 0; i < Singleton.Instance.GameBoard.GetLength(0); i++)
+                {
+                    for (int j = 0; j < Singleton.Instance.GameBoard.GetLength(1); j++)
+                    {
+                        if (groupSameBubble.Contains(Singleton.Instance._bubbleTable[i, j]))
+                        {
+                            Singleton.Instance._bubbleTable[i, j] = new Bubble(_bubbleTexture[5]);
+                        }
+                    }
+                }
+                
+                foreach (Bubble _bubble in Singleton.Instance._bubbleTable)
+                {
+                    _bubble.CanDestroy = false;
+                }
+
+                bool isHitCeiling = false;
+                foreach (Bubble _bubble in Singleton.Instance._bubbleTable)
+                {
+                    isHitCeiling = false;
+                    if (_bubble._positionBox.Y > 0)
+                    {
+                        connectedBubble = _bubble.FindConnectedBubble();
+                        foreach (Bubble burb in connectedBubble)
+                        {
+                            isHitCeiling = true;
+                            break;
+                        }
+                    }
+
+                    if (!isHitCeiling)
+                    {
+                        _bubble.CanDestroy = true;
+                        floatingBubble.Add(_bubble);
+                    }
+                }
+            }
+
+            for (int i = 0; i < Singleton.Instance.GameBoard.GetLength(0); i++)
+            {
+                for (int j = 0; j < Singleton.Instance.GameBoard.GetLength(1); j++)
+                {
+                    if (floatingBubble.Contains(Singleton.Instance._bubbleTable[i, j]))
+                    {
+                        Singleton.Instance._bubbleTable[i, j] = new Bubble(_bubbleTexture[5]);
+                    }
+                }
+            }
+            foreach (Bubble _bubble in floatingBubble)
+            {
+                FallingBubble.Add(_bubble);
+            }
+
         }
 
         //test if it can use only 1 switch-case
@@ -299,7 +386,7 @@ namespace SpacePuzzleBobble.GameObject
             return index;
         }
 
-        private bool CheckHit()
+        /*private bool CheckHit()
         {
             bool isHisTop = false;
 
@@ -315,22 +402,22 @@ namespace SpacePuzzleBobble.GameObject
             }
 
             //still have an exception
-            /*
+            *//*
             else if (Singleton.Instance.GameBoard[ (int)Position.Y / Singleton.TILESIZE, 
                         (int)Position.X / Singleton.TILESIZE] != -1)
             {
                 //collision occur -> hit other bubble
                 isHisTop = true;
-            }*/
+            }*//*
 
             return isHisTop;
         }
 
-    private bool CheckDead()
+        private bool CheckDead()
         {
             bool isDead = false;
 
             return isDead;
-        }
+        }*/
     } //class
 }

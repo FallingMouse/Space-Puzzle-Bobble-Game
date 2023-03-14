@@ -37,6 +37,18 @@
 /processorParam:TextureFormat=Color
 /build:Background/ceiling.png
 
+#begin Background/monitor.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Background/monitor.png
+
 #begin Bubble/blue.png
 /importer:TextureImporter
 /processor:TextureProcessor

@@ -16,10 +16,10 @@ namespace SpacePuzzleBobble
         private SpriteBatch _spriteBatch;
 
         Crosshair _crosshair;
-        Bubble _bubbleNextOne, _bubbleNextTwo;
+        Bubble _bubbleNextOne, _bubbleNextTwo, _bubbleMonitor;
         //Bubble[,] _bubbleTable;
 
-        Texture2D _backgroundTexture, _rectTestTexture, _crosshairTexture;
+        Texture2D _backgroundTexture, _monitorTexture, _rectTestTexture, _crosshairTexture;
         Texture2D[] _bubbleTexture;
 
         SpriteFont _font;
@@ -34,7 +34,7 @@ namespace SpacePuzzleBobble
         protected override void Initialize()
         {
             // 1920, 1080 (16:9 Resolution)
-            Window.Title = "UFO Khon Kaen";
+            Window.Title = "Stardenburdenhardenbart Puzzle";
             Window.AllowUserResizing= true;
             Window.IsBorderless= true;
             _graphics.PreferredBackBufferWidth = Singleton.SCREENWIDTH;
@@ -50,6 +50,7 @@ namespace SpacePuzzleBobble
 
             // Load Texture
             _backgroundTexture = this.Content.Load<Texture2D>("Background/background");
+            _monitorTexture = this.Content.Load<Texture2D>("Background/monitor");
             _crosshairTexture = this.Content.Load<Texture2D>("Crosshair/crosshair");
 
             _bubbleTexture = new Texture2D[6];
@@ -89,6 +90,13 @@ namespace SpacePuzzleBobble
             {
                 Singleton.Instance.spacebarPressed = false;
             }
+
+            _bubbleMonitor = new Bubble(_bubbleTexture[_bubbleNextOne.color])
+            {
+                Position = new Vector2((Singleton.SCREENWIDTH / 2) - Singleton.TILESIZE * 1.40f,
+                                           (Singleton.TILESIZE * 11) + Singleton.TILESIZE / 8f),
+                Scale = new Vector2(1 / 1.45f, 1 / 1.45f),
+            };
 
             // TODO: Add your update logic here
             _crosshair.Update(gameTime);
@@ -140,6 +148,11 @@ namespace SpacePuzzleBobble
             _spriteBatch.Draw(_backgroundTexture, new Vector2(0,0), Color.White);
 
             _bubbleNextOne.Draw(_spriteBatch);
+
+            // Draw Monitor
+            _spriteBatch.Draw(_monitorTexture, new Vector2(0, 0), Color.White);
+
+            _bubbleMonitor.Draw(_spriteBatch);
             _bubbleNextTwo.Draw(_spriteBatch);
 
             //Score
@@ -210,6 +223,8 @@ namespace SpacePuzzleBobble
                             Position = new Vector2(_rectTable.X, _rectTable.Y),
                             Scale = new Vector2(0.25f, 0.25f)
                         };
+                        Singleton.Instance._bubbleTable[i, j].Reset();
+                        Singleton.Instance._bubbleTable[i, j].color = Singleton.Instance.GameBoard[i, j];
                     }
                     else
                     {
@@ -218,7 +233,22 @@ namespace SpacePuzzleBobble
                             Position = new Vector2(_rectTable.X, _rectTable.Y),
                             Scale = new Vector2(0.25f, 0.25f)
                         };
+                        Singleton.Instance._bubbleTable[i, j].Reset();
+                        Singleton.Instance._bubbleTable[i, j].color = 5;
                     }
+                    //refer to index of array
+                    int fy = (int)(Singleton.Instance._bubbleTable[i, j].Position.Y - Singleton.TILESIZE + (Singleton.TILESIZE / 2)) / Singleton.TILESIZE;
+                    int fx = (int)((Singleton.Instance._bubbleTable[i, j].Position.X - (Singleton.TILESIZE * 11) + (Singleton.TILESIZE / 2) - ((fy % 2) * (Singleton.TILESIZE / 2))) / Singleton.TILESIZE);
+
+                    Singleton.Instance._bubbleTable[i, j]._positionBox = new Vector2(fx, fy);
+
+                    //refer to position on game board
+                    Rectangle boundary = new Rectangle((fx * Singleton.TILESIZE) + (Singleton.TILESIZE * 11) + ((fy % 2) * (Singleton.TILESIZE / 2)),
+                                    (int)(fy * Singleton.TILESIZE) + Singleton.TILESIZE, Singleton.TILESIZE, Singleton.TILESIZE);
+                    Singleton.Instance._bubbleTable[i, j]._positionBubble = new Vector2(boundary.X, boundary.Y);
+
+                    //Singleton.Instance.GameBoard[fy, fx] = Singleton.Instance._bubbleTable[i, j].color; // Not Equal -1 but it's not _bubbleTexture
+                    
                 }
             }
 
@@ -255,6 +285,6 @@ namespace SpacePuzzleBobble
             */
 
             Singleton.Instance.Score = 0;
-        }
+        }    
     }
 }

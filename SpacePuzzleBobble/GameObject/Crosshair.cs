@@ -13,6 +13,9 @@ namespace SpacePuzzleBobble.GameObject
 
         private float _elapsedTime;
 
+        private bool _spacebarPressed = false;
+        private float _delayTime = 1f;
+
         public Crosshair(Texture2D texture, Bubble _bubbleNext, Bubble _bubbleNextTwo) : base(texture)
         {
             this._bubbleNext = _bubbleNext;
@@ -42,9 +45,10 @@ namespace SpacePuzzleBobble.GameObject
 
             /*if (Singleton.Instance.isShooting)
                 _bubbleNext.Update(gameTime);*/
-            if (Singleton.Instance.CurrentKey.IsKeyDown(Keys.Space) && !Singleton.Instance.CurrentKey.Equals(Singleton.Instance.PreviousKey))
+            if (!_spacebarPressed && Singleton.Instance.CurrentKey.IsKeyDown(Keys.Space) && !Singleton.Instance.CurrentKey.Equals(Singleton.Instance.PreviousKey))
             {
                 //Singleton.Instance.isShooting = true;
+                _spacebarPressed = true;
 
                 _bubbleNext.Position = new Vector2(Singleton.SCREENWIDTH / 2 - Singleton.TILESIZE / 2, Singleton.SCREENHEIGHT);
                 _bubbleNext.Scale = new Vector2(0.25f, 0.25f);
@@ -57,6 +61,16 @@ namespace SpacePuzzleBobble.GameObject
                 _bubbleNext.Update(gameTime);
 
                 //_bubbleNext = _bubbleNextTwo;
+            }
+
+            if (_spacebarPressed)
+            {
+                _delayTime -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+                if (_delayTime <= 0f)
+                {
+                    _spacebarPressed = false;
+                    _delayTime = 1f;
+                }
             }
 
             base.Update(gameTime);
