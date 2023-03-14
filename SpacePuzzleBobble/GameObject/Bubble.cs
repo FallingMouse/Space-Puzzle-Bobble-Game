@@ -33,7 +33,6 @@ namespace SpacePuzzleBobble.GameObject
             Green,
             Yellow,
             Pink,
-            Blank,
             SIZE
         }
         public static BubbleType CurrentBubbleType;
@@ -85,9 +84,6 @@ namespace SpacePuzzleBobble.GameObject
                     break;
                 case BubbleType.Pink:
                     color = 4;
-                    break;
-                case BubbleType.Blank:
-                    color = 5;
                     break;
             }
             //index = indexOne;
@@ -328,34 +324,37 @@ namespace SpacePuzzleBobble.GameObject
                         connectedBubble = _bubble.FindConnectedBubble();
                         foreach (Bubble burb in connectedBubble)
                         {
-                            isHitCeiling = true;
-                            break;
+                            if(burb._positionBox.Y == 0)
+                            {
+                                isHitCeiling = true;
+                                break;
+                            }
+                        }
+
+                        if (!isHitCeiling)
+                        {
+                            _bubble.CanDestroy = true;
+                            floatingBubble.Add(_bubble);
                         }
                     }
-
-                    if (!isHitCeiling)
-                    {
-                        _bubble.CanDestroy = true;
-                        floatingBubble.Add(_bubble);
-                    }
                 }
-            }
 
-            for (int i = 0; i < Singleton.Instance.GameBoard.GetLength(0); i++)
-            {
-                for (int j = 0; j < Singleton.Instance.GameBoard.GetLength(1); j++)
+                for (int i = 0; i < Singleton.Instance.GameBoard.GetLength(0); i++)
                 {
-                    if (floatingBubble.Contains(Singleton.Instance._bubbleTable[i, j]))
+                    for (int j = 0; j < Singleton.Instance.GameBoard.GetLength(1); j++)
                     {
-                        Singleton.Instance._bubbleTable[i, j] = new Bubble(_bubbleTexture[5]);
+                        if (floatingBubble.Contains(Singleton.Instance._bubbleTable[i, j]))
+                        {
+                            Singleton.Instance._bubbleTable[i, j] = new Bubble(_bubbleTexture[5]);
+                        }
                     }
                 }
-            }
-            foreach (Bubble _bubble in floatingBubble)
-            {
-                FallingBubble.Add(_bubble);
-            }
+                foreach (Bubble _bubble in floatingBubble)
+                {
+                    FallingBubble.Add(_bubble);
+                }
 
+            }
         }
 
         //test if it can use only 1 switch-case
