@@ -10,6 +10,13 @@ namespace SpacePuzzleBobble.GameObject
     {
         public Vector2 _tick, _direction, _positionBubble;
         public int color, fy, fx;
+        public static int index;
+
+        //test
+        public Vector2 tmpPosition = Vector2.Zero;
+        public double tmpDistance = 0, tmpRadius = 0;
+        public bool tmpB = false;
+        public float dxTmp = 0, dyTmp = 0;
 
         public Texture2D[] _bubbleTexture;
 
@@ -95,12 +102,14 @@ namespace SpacePuzzleBobble.GameObject
             {
                 _direction.X *= -1;
             }
+
+            // Bubble Hit Ceiling
             if (Position.Y <= Singleton.TILESIZE)
             {
                 _direction = Vector2.Zero;
 
                 DetectCollision();
-                Position = _positionBubble;
+                //Position = _positionBubble;
 
                 IsHitTop = true;
 
@@ -109,23 +118,96 @@ namespace SpacePuzzleBobble.GameObject
                     IsHitTop = true;
                 }*/
             }
+            else // Bubble Hit Bubble
+            //if (Position.Y > Singleton.TILESIZE) // Bubble Hit Bubble
+            {
+                for (int i = 0; i < Singleton.Instance.GameBoard.GetLength(0); i++)
+                {
+                    for (int j = 0; j < Singleton.Instance.GameBoard.GetLength(1); j++)
+                    {
+                        if (Singleton.Instance.GameBoard[i, j] != -1)
+                        {
+                            /*if (Singleton.Instance._bubbleTable[i, j] != this)
+                            {*/
+                                if (BubbleCollider(Singleton.Instance._bubbleTable[i, j]))
+                                {
+                                    //_direction = Vector2.Zero;
+
+                                    DetectCollision();
+                                    //Position = _positionBubble; // Move to DetectCollision()
+
+                                    IsHitTop = true;
+                                }
+                            /*}*/
+                        }
+                    }
+                }
+            }
 
             base.Update(gameTime);
         }
         public void DetectCollision()
         {
+            //refer to index of array
             fy = (int)(Position.Y - Singleton.TILESIZE + (Singleton.TILESIZE / 2)) / Singleton.TILESIZE;
             fx = (int)((Position.X - (Singleton.TILESIZE * 11) + (Singleton.TILESIZE / 2) - ((fy % 2) * (Singleton.TILESIZE / 2))) / Singleton.TILESIZE);
             
+            //refer to position on game board
             Rectangle boundary = new Rectangle((fx * Singleton.TILESIZE) + (Singleton.TILESIZE * 11) + ((fy % 2) * (Singleton.TILESIZE / 2)),
                             (int)(fy * Singleton.TILESIZE) + Singleton.TILESIZE, Singleton.TILESIZE, Singleton.TILESIZE);
             _positionBubble = new Vector2(boundary.X, boundary.Y);
+            //Singleton.Instance._bubbleTable[fx, fy] = this;
+            //Singleton.Instance._bubbleTable[fx, fy] = this;
+            //Singleton.Instance.GameBoard[fx, fy] = 0; // Not Equal -1
+            //Singleton.Instance._bubbleTable[fx, fy].Position = _positionBubble;
+
+            Singleton.Instance._bubbleTable[fy, fx] = this;
+            Singleton.Instance.GameBoard[fy, fx] = 0; // Not Equal -1 but it's not _bubbleTexture
+            Singleton.Instance._bubbleTable[fy, fx].Position = _positionBubble;
         }
+
+        public bool BubbleCollider(Bubble _bubbleTable)
+        {
+            float dx = _bubbleTable.Position.X - Position.X;
+            float dy = _bubbleTable.Position.Y - Position.Y;            
+
+            int radiusOb1 = Singleton.TILESIZE / 2;
+            int radiusOb2 = Singleton.TILESIZE / 2;
+            double radiusTotal = radiusOb1 + radiusOb2;
+            double radiusE = Math.Pow(radiusTotal, 2);
+
+            //double distance = Math.Sqrt(Math.Pow(dx, 2) + Math.Pow(dy, 2));
+            double distance = Math.Pow(dx, 2) + Math.Pow(dy, 2);
+            /*
+           
+            Int32 radio1 = objetoActual.Width / 2;
+            Int32 radio2 = objeto2.Width / 2;
+            Int32 radioTotal = radio1 + radio2;
+            double diff1 = Math.Pow(dx, 2) + Math.Pow(dy, 2);
+            double radioE = Math.Pow(radioTotal, 2);
+            */
+
+            //test
+            tmpPosition = _bubbleTable.Position;
+            dxTmp = dx;
+            dyTmp = dy;
+
+
+            if (distance <= radiusE)
+            {
+                tmpB = true;
+                return true;
+            }
+            tmpDistance = distance;
+            tmpRadius = radiusE;
+            return false;
+        }
+
 
         //test if it can use only 1 switch-case
         public static int GetRandomColor()
         {
-            int index = 0;
+            index = 0;
             CurrentBubbleType = (BubbleType)(Singleton.Instance.Random.Next((int)BubbleType.SIZE));
 
                 switch (CurrentBubbleType)

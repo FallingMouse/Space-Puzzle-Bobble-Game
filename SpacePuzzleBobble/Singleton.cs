@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using SpacePuzzleBobble.GameObject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,7 @@ namespace SpacePuzzleBobble
         public Boolean isShooting = false;
 
         public int[,] GameBoard;
+        public Bubble[,] _bubbleTable;
 
         public KeyboardState PreviousKey, CurrentKey;
 

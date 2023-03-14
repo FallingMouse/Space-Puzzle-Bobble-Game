@@ -57,9 +57,7 @@ namespace SpacePuzzleBobble.GameObject
                 _bubbleNext.Update(gameTime);
 
                 //_bubbleNext = _bubbleNextTwo;
-                
             }
-
 
             base.Update(gameTime);
         }
