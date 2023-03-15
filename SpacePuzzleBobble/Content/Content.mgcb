@@ -138,5 +138,12 @@
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:Font/GameFont.spritefont
+/build:Font/GameFont.spritefont;Font/GameFont2.spritefont
+
+#begin Font/GameFont1.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Font/GameFont1.spritefont
 

@@ -22,7 +22,8 @@ namespace SpacePuzzleBobble
         Texture2D _backgroundTexture, _monitorTexture, _rectTestTexture, _crosshairTexture;
         Texture2D[] _bubbleTexture;
 
-        SpriteFont _font;
+        SpriteFont _font2;
+        SpriteFont _font1;
 
         public MainScene()
         {
@@ -67,7 +68,8 @@ namespace SpacePuzzleBobble
             _rectTestTexture.SetData(data);
             _bubbleTexture[5] = _rectTestTexture;
 
-            _font = Content.Load<SpriteFont>("Font/GameFont");
+            _font2 = Content.Load<SpriteFont>("Font/GameFont2");
+            _font1 = Content.Load<SpriteFont>("Font/GameFont1");
 
             Reset();
         }
@@ -145,7 +147,7 @@ namespace SpacePuzzleBobble
             _spriteBatch.Begin();
 
             // Draw Background
-            _spriteBatch.Draw(_backgroundTexture, new Vector2(0,0), Color.White);
+            _spriteBatch.Draw(_backgroundTexture, new Vector2(0, 0), Color.White);
 
             _bubbleNextOne.Draw(_spriteBatch);
 
@@ -155,8 +157,19 @@ namespace SpacePuzzleBobble
             _bubbleMonitor.Draw(_spriteBatch);
             _bubbleNextTwo.Draw(_spriteBatch);
 
-            //Score
-            _spriteBatch.DrawString(_font, "Score: " + Singleton.Instance.Score.ToString(), new Vector2(10, 10), Color.White);
+            // Draw Score
+            //_spriteBatch.DrawString(_font1, "SCORE ", new Vector2(220, 850), Color.White);
+            //_spriteBatch.DrawString(_font, Singleton.Instance.Score.ToString("D6"), new Vector2(179, 900), Color.White);
+
+            // Draw Score
+            float rotationScore1 = MathHelper.ToRadians(-12.2f);
+            float rotationScore2 = MathHelper.ToRadians(-13.8f);
+            _spriteBatch.DrawString(_font1, "SCORE", new Vector2(270, 858), Color.White, rotationScore1, _font1.MeasureString("SCORE") / 2f, 1f, SpriteEffects.None, 0f);
+            _spriteBatch.DrawString(_font2, Singleton.Instance.Score.ToString("D6"), new Vector2(245, 905), Color.White, rotationScore2, _font1.MeasureString("SCORE") / 2f, 1f, SpriteEffects.None, 0f);
+
+            // Draw CountDown
+            float rotationCountDown = MathHelper.ToRadians(12.0f);
+            _spriteBatch.DrawString(_font2, "60", new Vector2(1530, 870), Color.White, rotationCountDown, _font2.MeasureString("60") / 2f, 1f, SpriteEffects.None, 0f);
 
             // Draw Crosshair
             _crosshair.Draw(_spriteBatch);
