@@ -109,7 +109,7 @@ namespace SpacePuzzleBobble.GameObject
 
             // Bubble Drop Time
             //elapsedTime = gameTime.ElapsedGameTime.Ticks / (float)TimeSpan.TicksPerSecond;
-            elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            //elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             bubbleDropTime++;
             //if (elapsedTime > 0.03f)
             if (bubbleDropTime == 150)
@@ -138,18 +138,18 @@ namespace SpacePuzzleBobble.GameObject
                         }
                     }
                 }  */
-
-                // Bubble Hit Ceiling
-                if (Position.Y <= Singleton.TILESIZE + (Singleton.Instance.posCeiling * Singleton.TILESIZE))
-                {
-                    _direction = Vector2.Zero;
-
-                    DetectCollision();
-
-                    IsHitTop = true;
-                }
-
             }
+
+            // Bubble Hit Ceiling
+            if (Position.Y <= Singleton.TILESIZE + (Singleton.Instance.posCeiling * Singleton.TILESIZE))
+            {
+                _direction = Vector2.Zero;
+
+                DetectCollision();
+
+                IsHitTop = true;
+            }
+
             else // Bubble Hit Bubble
             //if (Position.Y > Singleton.TILESIZE) // Bubble Hit Bubble
             {
@@ -346,7 +346,7 @@ namespace SpacePuzzleBobble.GameObject
             List<Bubble> floatingBubble = new List<Bubble>();
             List<Bubble> connectedBubble = new List<Bubble>();
 
-            bubbleDropTime++;
+            bubbleDropTime++; //
 
             if (groupSameBubble.Count >= 3)
             {
@@ -413,20 +413,20 @@ namespace SpacePuzzleBobble.GameObject
                 }     
             }
             // Bubble Drop Time
-            if(bubbleDropTime == 5)
-            {
-                Singleton.Instance.posCeiling++;
-                bubbleDropTime = 0;
-                foreach(Bubble bubbleTable in Singleton.Instance._bubbleTable)
-                {
-                    bubbleTable._positionBox = new Vector2(bubbleTable._positionBox.X, bubbleTable._positionBox.Y + 1);
+            //if(bubbleDropTime == 5)
+            //{
+            //    Singleton.Instance.posCeiling++;
+            //    bubbleDropTime = 0;
+            //    foreach(Bubble bubbleTable in Singleton.Instance._bubbleTable)
+            //    {
+            //        bubbleTable._positionBox = new Vector2(bubbleTable._positionBox.X, bubbleTable._positionBox.Y + 1);
 
-                    Rectangle boundary = new Rectangle(((int)(bubbleTable._positionBox.X) * Singleton.TILESIZE) + (Singleton.TILESIZE * 11) + (((int)(bubbleTable._positionBox.Y + Singleton.Instance.posCeiling) % 2) * (Singleton.TILESIZE / 2)),
-                        (int)((int)(bubbleTable._positionBox.Y) * Singleton.TILESIZE) + Singleton.TILESIZE, Singleton.TILESIZE, Singleton.TILESIZE);
+            //        Rectangle boundary = new Rectangle(((int)(bubbleTable._positionBox.X) * Singleton.TILESIZE) + (Singleton.TILESIZE * 11) + (((int)(bubbleTable._positionBox.Y + Singleton.Instance.posCeiling) % 2) * (Singleton.TILESIZE / 2)),
+            //            (int)((int)(bubbleTable._positionBox.Y) * Singleton.TILESIZE) + Singleton.TILESIZE, Singleton.TILESIZE, Singleton.TILESIZE);
 
-                    bubbleTable.Position = new Vector2(boundary.X, boundary.Y);
-                }
-            }
+            //        bubbleTable.Position = new Vector2(boundary.X, boundary.Y);
+            //    }
+            //}
         }
 
         //test if it can use only 1 switch-case
