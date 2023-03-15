@@ -402,13 +402,15 @@ namespace SpacePuzzleBobble
             Singleton.Instance.GameBoard = new int[Singleton.GAMEHEIGHT, Singleton.GAMEWIDTH];
 
             //Starting pattern bubbles
+            //Starting pattern bubbles
+            //Starting pattern bubbles
             Singleton.Instance.GameBoard = new int[Singleton.GAMEHEIGHT, Singleton.GAMEWIDTH]
             {
             /*        0    1   2  3   4   5   6   7  */
-            /*0*/    {0   ,0 , 1 ,1  ,2  ,2  ,3  ,0  },
-            /*1*/    {0   ,4 , 1 ,4  ,2  ,1  ,3  ,-1 },
-            /*2*/    {1   ,1 , 2 ,2  ,3  ,3  ,4  ,0  },
-            /*3*/    {4   ,4 , 2 ,2  ,4  ,4  ,0  ,-1 },
+            /*0*/    {0   ,0 , 1 ,1  ,2  ,2  ,3  ,3  },
+            /*1*/    {0   ,0 , 1 ,1  ,2  ,2  ,3  ,-1  },
+            /*2*/    {1   ,1 , 2 ,2  ,4  ,4  ,0  ,0  },
+            /*3*/    {1   ,1 , 2 ,2  ,4  ,4  ,0  ,-1  },
             /*4*/    {-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 },
             /*5*/    {-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 },
             /*6*/    {-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 },
