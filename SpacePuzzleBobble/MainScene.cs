@@ -18,11 +18,19 @@ namespace SpacePuzzleBobble
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
+        // Game Pause
+        private bool pauseScreen = false;
+        private bool resume = false, restart = false, exit = false, menubtn = false, menubtnhov = false;
+
         Crosshair _crosshair;
         Bubble _bubbleNextOne, _bubbleNextTwo, _bubbleMonitor;
         //Bubble[,] _bubbleTable;
 
-        Texture2D _backgroundTexture, _ceilingTexture, _monitorTexture, _rectTestTexture, _crosshairTexture;
+        Texture2D _backgroundTexture, _ceilingTexture, _monitorTexture, _upperTexture, _rectTestTexture, _crosshairTexture,
+                  // Game Pause
+                  _pauseTexture, _pauseresumeTexture, _pauserestartTexture, _pauseexitTexture, _menubtnTexture, _menubtnhovTexture;
+
+
         Texture2D[] _bubbleTexture;
 
         SpriteFont _font2;
@@ -55,8 +63,16 @@ namespace SpacePuzzleBobble
             // Load Texture
             _backgroundTexture = this.Content.Load<Texture2D>("Background/background");
             _monitorTexture = this.Content.Load<Texture2D>("Background/monitor");
+            _upperTexture = this.Content.Load<Texture2D>("Background/backgroundUpper");
             _ceilingTexture = this.Content.Load<Texture2D>("Background/ceiling");
             _crosshairTexture = this.Content.Load<Texture2D>("Crosshair/crosshair");
+            // Game Pause
+            _pauseTexture = this.Content.Load<Texture2D>("Pause/pause");
+            _pauseresumeTexture = this.Content.Load<Texture2D>("Pause/pauseresume");
+            _pauserestartTexture = this.Content.Load<Texture2D>("Pause/pauserestart");
+            _pauseexitTexture = this.Content.Load<Texture2D>("Pause/pauseexit");
+            _menubtnTexture = this.Content.Load<Texture2D>("Pause/menubtn");
+            _menubtnhovTexture = this.Content.Load<Texture2D>("Pause/menubtnhov");
 
             _bubbleTexture = new Texture2D[6];
             _bubbleTexture[0] = this.Content.Load<Texture2D>("Bubble/red");
@@ -81,6 +97,9 @@ namespace SpacePuzzleBobble
         protected override void Update(GameTime gameTime)
         {
             Singleton.Instance.CurrentKey = Keyboard.GetState();
+
+            Singleton.Instance.MousePrevious = Singleton.Instance.MouseCurrent;
+            Singleton.Instance.MouseCurrent = Mouse.GetState();
 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
@@ -110,6 +129,8 @@ namespace SpacePuzzleBobble
             switch (Singleton.Instance._currentGameState)
             {
                 case Singleton.GameState.Playing:
+
+                    menubtn = true; //Game Pause
 
                     _crosshair.Update(gameTime);
                     _bubbleNextOne.Update(gameTime);
@@ -155,6 +176,7 @@ namespace SpacePuzzleBobble
                     //change to pause state
                     if (Singleton.Instance.CurrentKey.IsKeyDown(Keys.P) && !Singleton.Instance.CurrentKey.Equals(Singleton.Instance.PreviousKey))
                     {
+                        pauseScreen = true; //Game Pause
                         Singleton.Instance._currentGameState = Singleton.GameState.Paused;
                     }
                     break;
@@ -182,6 +204,85 @@ namespace SpacePuzzleBobble
                     break;
             }
 
+            // Game Pause
+            if (pauseScreen)
+            {
+                // resume
+                // left, top, right, bottom
+                if ((Singleton.Instance.MouseCurrent.X > 760 && Singleton.Instance.MouseCurrent.Y > 507) && (Singleton.Instance.MouseCurrent.X < 1160 && Singleton.Instance.MouseCurrent.Y < 587))
+                {
+                    resume = true;
+
+                    if (Singleton.Instance.MouseCurrent.LeftButton == ButtonState.Pressed && Singleton.Instance.MousePrevious.LeftButton == ButtonState.Released)
+                    {
+                        pauseScreen = false;
+                        resume = false;
+                        Singleton.Instance._currentGameState = Singleton.GameState.Playing;
+                    }
+                }
+                else
+                {
+                    resume = false;
+                }
+
+                // restart
+                if ((Singleton.Instance.MouseCurrent.X > 760 && Singleton.Instance.MouseCurrent.Y > 632) && (Singleton.Instance.MouseCurrent.X < 1160 && Singleton.Instance.MouseCurrent.Y < 712))
+                {
+                    restart = true;
+
+                    if (Singleton.Instance.MouseCurrent.LeftButton == ButtonState.Pressed && Singleton.Instance.MousePrevious.LeftButton == ButtonState.Released)
+                    {
+                        pauseScreen = false;
+                        restart = false;
+                        //Singleton.Instance._currentGameState = Singleton.GameState.Playing;
+                        Reset();
+                    }
+                }
+                else
+                {
+                    restart = false;
+                }
+
+                // exit
+                if ((Singleton.Instance.MouseCurrent.X > 760 && Singleton.Instance.MouseCurrent.Y > 757) && (Singleton.Instance.MouseCurrent.X < 1160 && Singleton.Instance.MouseCurrent.Y < 837))
+                {
+                    exit = true;
+
+                    if (Singleton.Instance.MouseCurrent.LeftButton == ButtonState.Pressed && Singleton.Instance.MousePrevious.LeftButton == ButtonState.Released)
+                    {
+                        pauseScreen = false;
+                        exit = false;
+                        //Singleton.Instance._currentGameState = Singleton.GameState.Playing;
+                        Exit();
+                    }
+                }
+                else
+                {
+                    exit = false;
+
+                }
+            }
+
+            if (menubtn)
+            {
+                if ((Singleton.Instance.MouseCurrent.X > 1825 && Singleton.Instance.MouseCurrent.Y > 27) && (Singleton.Instance.MouseCurrent.X < 1887 && Singleton.Instance.MouseCurrent.Y < 68))
+                {
+                    menubtnhov = true;
+
+                    if (Singleton.Instance.MouseCurrent.LeftButton == ButtonState.Pressed && Singleton.Instance.MousePrevious.LeftButton == ButtonState.Released)
+                    {
+                        pauseScreen = true;
+                        Singleton.Instance._currentGameState = Singleton.GameState.Paused;
+                    }
+                }
+                else
+                {
+                    menubtnhov = false;
+
+                }
+            }
+
+
             Singleton.Instance.PreviousKey = Singleton.Instance.CurrentKey;
 
             base.Update(gameTime);
@@ -196,6 +297,9 @@ namespace SpacePuzzleBobble
             // Draw Background
             _spriteBatch.Draw(_backgroundTexture, new Vector2(0, 0), Color.White);
 
+            //Draw Ceiling
+            _spriteBatch.Draw(_ceilingTexture, new Vector2((Singleton.TILESIZE * 11) - Singleton.TILESIZE / 2, (Singleton.TILESIZE + (Singleton.Instance.posCeiling * Singleton.TILESIZE)) - _ceilingTexture.Height + Singleton.TILESIZE / 2), null, Color.White);
+
             _bubbleNextOne.Draw(_spriteBatch);
 
             // Draw Monitor
@@ -203,6 +307,9 @@ namespace SpacePuzzleBobble
 
             _bubbleMonitor.Draw(_spriteBatch);
             _bubbleNextTwo.Draw(_spriteBatch);
+
+            // Draw Upper
+            _spriteBatch.Draw(_upperTexture, new Vector2(0, 0), Color.White);
 
             // Draw Score
             //_spriteBatch.DrawString(_font1, "SCORE ", new Vector2(220, 850), Color.White);
@@ -234,9 +341,7 @@ namespace SpacePuzzleBobble
 
             if(Singleton.Instance._currentGameState == Singleton.GameState.Paused)
             {
-                Vector2 _fontSize = _font1.MeasureString("Pause");
-                _spriteBatch.DrawString(_font1, "Pause", new Vector2((Singleton.SCREENWIDTH - _fontSize.X) / 2, (Singleton.SCREENHEIGHT - _fontSize.Y) / 2),
-                Color.White, 0f, Vector2.Zero, new Vector2(4.0f, 4.0f), SpriteEffects.None, 1.0f);
+                _spriteBatch.Draw(_pauseTexture, new Vector2(0, 0), Color.White);
             }
             else if(Singleton.Instance._currentGameState == Singleton.GameState.GameOver)
             {
@@ -248,9 +353,32 @@ namespace SpacePuzzleBobble
             {
                 Vector2 _fontSize_over = _font1.MeasureString("You Win!!");
                 _spriteBatch.DrawString(_font1, "You Win!!",new Vector2((Singleton.SCREENWIDTH - _fontSize_over.X) / 2, (Singleton.SCREENHEIGHT - _fontSize_over.Y) / 2),
-                Color.YellowGreen, 0f, Vector2.Zero, new Vector2(1.0f, 1.0f), SpriteEffects.None, 1.0f);
+                Color.White, 0f, Vector2.Zero, new Vector2(1.0f, 1.0f), SpriteEffects.None, 1.0f);
             }
-                
+
+            // Game Pause
+            _spriteBatch.Draw(_menubtnTexture, new Vector2(1825, 27), Color.White);
+
+            if (menubtnhov)
+            {
+                _spriteBatch.Draw(_menubtnhovTexture, new Vector2(1825, 27), Color.White);
+            }
+
+            if (resume)
+            {
+                _spriteBatch.Draw(_pauseresumeTexture, new Vector2(0, 0), Color.White);
+            }
+
+            if (restart)
+            {
+                _spriteBatch.Draw(_pauserestartTexture, new Vector2(0, 0), Color.White);
+            }
+
+            if (exit)
+            {
+                _spriteBatch.Draw(_pauseexitTexture, new Vector2(0, 0), Color.White);
+            }
+
             _spriteBatch.End();
             _graphics.BeginDraw();
 
@@ -287,6 +415,7 @@ namespace SpacePuzzleBobble
 
             //Set game state
             Singleton.Instance._currentGameState = Singleton.GameState.Playing;
+            Singleton.Instance.posCeiling = 0;
             
             Singleton.Instance._bubbleTable = new Bubble[Singleton.GAMEHEIGHT, Singleton.GAMEWIDTH];
 
@@ -295,7 +424,7 @@ namespace SpacePuzzleBobble
             {
                 for (int j = 0; j < Singleton.Instance.GameBoard.GetLength(1); j++)
                 {
-                    Rectangle _rectTable = new Rectangle((j * Singleton.TILESIZE) + (Singleton.TILESIZE * 11) + ((i % 2) * (Singleton.TILESIZE / 2)),
+                    Rectangle _rectTable = new Rectangle((j * Singleton.TILESIZE) + (Singleton.TILESIZE * 11) + (((i + Singleton.Instance.posCeiling) % 2) * (Singleton.TILESIZE / 2)),
                                                 (int)i * Singleton.TILESIZE + (Singleton.TILESIZE), Singleton.TILESIZE, Singleton.TILESIZE);
 
                     if (Singleton.Instance.GameBoard[i, j] != -1)
@@ -320,12 +449,12 @@ namespace SpacePuzzleBobble
                     }
                     //refer to index of array
                     int fy = (int)(Singleton.Instance._bubbleTable[i, j].Position.Y - Singleton.TILESIZE + (Singleton.TILESIZE / 2)) / Singleton.TILESIZE;
-                    int fx = (int)((Singleton.Instance._bubbleTable[i, j].Position.X - (Singleton.TILESIZE * 11) + (Singleton.TILESIZE / 2) - ((fy % 2) * (Singleton.TILESIZE / 2))) / Singleton.TILESIZE);
+                    int fx = (int)((Singleton.Instance._bubbleTable[i, j].Position.X - (Singleton.TILESIZE * 11) + (Singleton.TILESIZE / 2) - (((fy + Singleton.Instance.posCeiling )% 2) * (Singleton.TILESIZE / 2))) / Singleton.TILESIZE);
 
                     Singleton.Instance._bubbleTable[i, j]._positionBox = new Vector2(fx, fy);
 
                     //refer to position on game board
-                    Rectangle boundary = new Rectangle((fx * Singleton.TILESIZE) + (Singleton.TILESIZE * 11) + ((fy % 2) * (Singleton.TILESIZE / 2)),
+                    Rectangle boundary = new Rectangle((fx * Singleton.TILESIZE) + (Singleton.TILESIZE * 11) + (((fy + Singleton.Instance.posCeiling) % 2) * (Singleton.TILESIZE / 2)),
                                     (int)(fy * Singleton.TILESIZE) + Singleton.TILESIZE, Singleton.TILESIZE, Singleton.TILESIZE);
                     Singleton.Instance._bubbleTable[i, j]._positionBubble = new Vector2(boundary.X, boundary.Y);
 

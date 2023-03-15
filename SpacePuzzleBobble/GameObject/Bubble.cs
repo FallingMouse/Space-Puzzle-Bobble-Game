@@ -11,7 +11,8 @@ namespace SpacePuzzleBobble.GameObject
     {
         public List<Bubble> neighbor, groupNeighbor, FallingBubble;
         public Vector2 _tick, _direction, _positionBox,_positionBubble;
-        public int color, fy, fx, count = 0;
+        public int color, fy, fx, spaceCount, bubbleDropTime = 0;
+        public float elapsedTime = 0;
         public static int index;
 
         //test
@@ -106,19 +107,48 @@ namespace SpacePuzzleBobble.GameObject
                 _direction.X *= -1;
             }
 
-            // Bubble Hit Ceiling
-            if (Position.Y <= Singleton.TILESIZE)
+            // Bubble Drop Time
+            //elapsedTime = gameTime.ElapsedGameTime.Ticks / (float)TimeSpan.TicksPerSecond;
+            elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            bubbleDropTime++;
+            //if (elapsedTime > 0.03f)
+            if (bubbleDropTime == 150)
             {
-                _direction = Vector2.Zero;
-
-                DetectCollision();
-
-                IsHitTop = true;
-
-                /*if (CheckHit())
+                Singleton.Instance.posCeiling++;
+                bubbleDropTime = 0;
+                foreach (Bubble bubbleTable in Singleton.Instance._bubbleTable)
                 {
+                    bubbleTable._positionBox = new Vector2(bubbleTable._positionBox.X, bubbleTable._positionBox.Y + 1);
+
+                    Rectangle boundary = new Rectangle(((int)(bubbleTable._positionBox.X) * Singleton.TILESIZE) + (Singleton.TILESIZE * 11) + (((int)(bubbleTable._positionBox.Y + Singleton.Instance.posCeiling) % 2) * (Singleton.TILESIZE / 2)),
+                                    (int)((int)(bubbleTable._positionBox.Y) * Singleton.TILESIZE) + Singleton.TILESIZE, Singleton.TILESIZE, Singleton.TILESIZE);
+
+                    bubbleTable.Position = new Vector2(boundary.X, boundary.Y);
+                    
+                }
+
+                /*for (int i = 0; i < Singleton.Instance.GameBoard.GetLength(0); i++)
+                {
+                    for (int j = 0; j < Singleton.Instance.GameBoard.GetLength(1); j++)
+                    {
+                        if (Singleton.Instance._bubbleTable[i, j] >= Singleton.Instance.GameBoard.GetLength(0))
+                        {
+                            IsDead = true;
+                            break;
+                        }
+                    }
+                }  */
+
+                // Bubble Hit Ceiling
+                if (Position.Y <= Singleton.TILESIZE + (Singleton.Instance.posCeiling * Singleton.TILESIZE))
+                {
+                    _direction = Vector2.Zero;
+
+                    DetectCollision();
+
                     IsHitTop = true;
-                }*/
+                }
+
             }
             else // Bubble Hit Bubble
             //if (Position.Y > Singleton.TILESIZE) // Bubble Hit Bubble
@@ -132,8 +162,6 @@ namespace SpacePuzzleBobble.GameObject
                             // check Bubble collide
                             if (BubbleCollider(Singleton.Instance._bubbleTable[i, j]))
                             {
-                                //_direction = Vector2.Zero;
-
                                 //if collision causes dying, stop this loop
                                 if (i+1 >= Singleton.Instance.GameBoard.GetLength(0))
                                 {
@@ -143,20 +171,20 @@ namespace SpacePuzzleBobble.GameObject
                                 else
                                 {
                                     DetectCollision();
-                                    PasteBubble(Singleton.Instance._bubbleTable[i, j]);
+                                    PasteBubble(Singleton.Instance._bubbleTable[fy, fx]);
                                     IsHitTop = true;
 
                                     //have to check all value contain in Game board is it equal -1 (space area), if so the player had clear all bubbles in game and WON
                                     //create condition here
-                                    count = 0;
+                                    spaceCount = 0;
                                     for (int k = 0; k < Singleton.Instance.GameBoard.GetLength(0); k++)
                                     {
                                         for (int l = 0; l < Singleton.Instance.GameBoard.GetLength(1); l++)
                                         {
-                                            if (Singleton.Instance.GameBoard[k, l] == -1) count++;
+                                            if (Singleton.Instance.GameBoard[k, l] == -1) spaceCount++;
 
                                             //every values contained in Singleton.Instance.GameBoard = -1 (all bubble clear)
-                                            if (count == (Singleton.Instance.GameBoard.GetLength(0) * Singleton.Instance.GameBoard.GetLength(1)))
+                                            if (spaceCount == (Singleton.Instance.GameBoard.GetLength(0) * Singleton.Instance.GameBoard.GetLength(1)))
                                                 IsWon = true;
                                         }
                                     }
@@ -174,12 +202,12 @@ namespace SpacePuzzleBobble.GameObject
         {
             //refer to index of array
             fy = (int)(Position.Y - Singleton.TILESIZE + (Singleton.TILESIZE / 2)) / Singleton.TILESIZE;
-            fx = (int)((Position.X - (Singleton.TILESIZE * 11) + (Singleton.TILESIZE / 2) - ((fy % 2) * (Singleton.TILESIZE / 2))) / Singleton.TILESIZE);
+            fx = (int)((Position.X - (Singleton.TILESIZE * 11) + (Singleton.TILESIZE / 2) - (((fy + Singleton.Instance.posCeiling) % 2) * (Singleton.TILESIZE / 2))) / Singleton.TILESIZE);
 
             _positionBox = new Vector2(fx, fy);
 
             //refer to position on game board
-            Rectangle boundary = new Rectangle((fx * Singleton.TILESIZE) + (Singleton.TILESIZE * 11) + ((fy % 2) * (Singleton.TILESIZE / 2)),
+            Rectangle boundary = new Rectangle((fx * Singleton.TILESIZE) + (Singleton.TILESIZE * 11) + (((fy + Singleton.Instance.posCeiling) % 2) * (Singleton.TILESIZE / 2)),
                             (int)(fy * Singleton.TILESIZE) + Singleton.TILESIZE, Singleton.TILESIZE, Singleton.TILESIZE);
             _positionBubble = new Vector2(boundary.X, boundary.Y);
 
@@ -226,14 +254,14 @@ namespace SpacePuzzleBobble.GameObject
                 {
                     // top left
                     if (Singleton.Instance._bubbleTable[i, j]._positionBox
-                        == new Vector2(_positionBox.X - ((_positionBox.Y + 1) % 2),
+                        == new Vector2(_positionBox.X - ((_positionBox.Y + 1 + Singleton.Instance.posCeiling) % 2),
                         _positionBox.Y - 1))
                     {
                         neighbor.Add(Singleton.Instance._bubbleTable[i, j]);
                     }
                     // top right
                     else if (Singleton.Instance._bubbleTable[i, j]._positionBox
-                        == new Vector2(_positionBox.X - ((_positionBox.Y + 1) % 2) + 1, 
+                        == new Vector2(_positionBox.X - ((_positionBox.Y + 1 + Singleton.Instance.posCeiling) % 2) + 1, 
                         _positionBox.Y - 1))
                     {
                         neighbor.Add(Singleton.Instance._bubbleTable[i, j]);
@@ -252,13 +280,13 @@ namespace SpacePuzzleBobble.GameObject
                     }
                     // bottom left
                     else if (Singleton.Instance._bubbleTable[i, j]._positionBox 
-                        == new Vector2(_positionBox.X -((_positionBox.Y + 1) % 2), _positionBox.Y + 1))
+                        == new Vector2(_positionBox.X -((_positionBox.Y + 1 + Singleton.Instance.posCeiling) % 2), _positionBox.Y + 1))
                     {
                         neighbor.Add(Singleton.Instance._bubbleTable[i, j]);
                     }
                     // bottom right
                     else if (Singleton.Instance._bubbleTable[i, j]._positionBox 
-                        == new Vector2(_positionBox.X + 1 - ((_positionBox.Y + 1) % 2), _positionBox.Y + 1))
+                        == new Vector2(_positionBox.X + 1 - ((_positionBox.Y + 1 + Singleton.Instance.posCeiling) % 2), _positionBox.Y + 1))
                     {
                         neighbor.Add(Singleton.Instance._bubbleTable[i, j]);
                     }
@@ -306,7 +334,7 @@ namespace SpacePuzzleBobble.GameObject
                 if(!_bubble.CanDestroy && !ConnectedBubble.Contains(_bubble))
                 {
                     ConnectedBubble.Add(_bubble);
-                    if (_bubble._positionBox.Y == 0) break;
+                    if (_bubble._positionBox.Y == Singleton.Instance.posCeiling) break;
                     FindConnectedBubble(ConnectedBubble, _bubble);
                 }
             }
@@ -317,6 +345,8 @@ namespace SpacePuzzleBobble.GameObject
             List<Bubble> groupSameBubble = bubble.FindSameColor();
             List<Bubble> floatingBubble = new List<Bubble>();
             List<Bubble> connectedBubble = new List<Bubble>();
+
+            bubbleDropTime++;
 
             if (groupSameBubble.Count >= 3)
             {
@@ -345,12 +375,12 @@ namespace SpacePuzzleBobble.GameObject
                 foreach (Bubble _bubble in Singleton.Instance._bubbleTable)
                 {
                     isHitCeiling = false;
-                    if (_bubble._positionBox.Y > 0)
+                    if (_bubble._positionBox.Y > Singleton.Instance.posCeiling) // default == 0
                     {
                         connectedBubble = _bubble.FindConnectedBubble();
                         foreach (Bubble burb in connectedBubble)
                         {
-                            if(burb._positionBox.Y == 0)
+                            if(burb._positionBox.Y == Singleton.Instance.posCeiling) // default == 0
                             {
                                 isHitCeiling = true;
                                 break;
@@ -380,8 +410,22 @@ namespace SpacePuzzleBobble.GameObject
                 foreach (Bubble _bubble in floatingBubble)
                 {
                     FallingBubble.Add(_bubble);
-                }
+                }     
+            }
+            // Bubble Drop Time
+            if(bubbleDropTime == 5)
+            {
+                Singleton.Instance.posCeiling++;
+                bubbleDropTime = 0;
+                foreach(Bubble bubbleTable in Singleton.Instance._bubbleTable)
+                {
+                    bubbleTable._positionBox = new Vector2(bubbleTable._positionBox.X, bubbleTable._positionBox.Y + 1);
 
+                    Rectangle boundary = new Rectangle(((int)(bubbleTable._positionBox.X) * Singleton.TILESIZE) + (Singleton.TILESIZE * 11) + (((int)(bubbleTable._positionBox.Y + Singleton.Instance.posCeiling) % 2) * (Singleton.TILESIZE / 2)),
+                        (int)((int)(bubbleTable._positionBox.Y) * Singleton.TILESIZE) + Singleton.TILESIZE, Singleton.TILESIZE, Singleton.TILESIZE);
+
+                    bubbleTable.Position = new Vector2(boundary.X, boundary.Y);
+                }
             }
         }
 
@@ -414,3 +458,4 @@ namespace SpacePuzzleBobble.GameObject
         }
     } //class 
 }
+

@@ -23,7 +23,7 @@ namespace SpacePuzzleBobble
         public const int SCREENHEIGHT = 1080;
 
         public int Score;
-        public int Level;
+        public int Countdown;
 
         public Boolean spacebarPressed = false;
         public Boolean isShooting = false;
@@ -31,9 +31,13 @@ namespace SpacePuzzleBobble
         public int[,] GameBoard;
         public Bubble[,] _bubbleTable;
 
+        public int posCeiling = 0;
+
         public KeyboardState PreviousKey, CurrentKey;
 
         public Random Random = new Random();
+
+        public MouseState MousePrevious, MouseCurrent;
 
         public enum GameState
         {
