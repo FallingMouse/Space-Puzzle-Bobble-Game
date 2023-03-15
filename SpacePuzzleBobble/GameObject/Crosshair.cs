@@ -28,7 +28,7 @@ namespace SpacePuzzleBobble.GameObject
             _elapsedTime += gameTime.ElapsedGameTime.Ticks / (float)TimeSpan.TicksPerSecond;
 
             // Crosshair Move
-            if (_elapsedTime > 0.03f && Rotation > -0.45f && Rotation < 0.45f)
+            if (_elapsedTime > 0.03f && Rotation > -0.44f && Rotation < 0.44f)
             {
                 if (Singleton.Instance.CurrentKey.IsKeyDown(Keys.Left) || Singleton.Instance.CurrentKey.IsKeyDown(Keys.A))
                 {
@@ -40,8 +40,8 @@ namespace SpacePuzzleBobble.GameObject
                 }
                 _elapsedTime = 0f;
             } 
-            if (Rotation >= 0.44f) Rotation = 0.44f;
-            else if (Rotation <= -0.44f) Rotation = -0.44f;
+            if (Rotation >= 0.42f) Rotation = 0.42f;
+            else if (Rotation <= -0.42f) Rotation = -0.42f;
 
             /*if (Singleton.Instance.isShooting)
                 _bubbleNext.Update(gameTime);*/

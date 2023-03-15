@@ -22,7 +22,7 @@ namespace SpacePuzzleBobble
         Bubble _bubbleNextOne, _bubbleNextTwo, _bubbleMonitor;
         //Bubble[,] _bubbleTable;
 
-        Texture2D _backgroundTexture, _monitorTexture, _rectTestTexture, _crosshairTexture;
+        Texture2D _backgroundTexture, _ceilingTexture, _monitorTexture, _rectTestTexture, _crosshairTexture;
         Texture2D[] _bubbleTexture;
 
         SpriteFont _font2;
@@ -55,6 +55,7 @@ namespace SpacePuzzleBobble
             // Load Texture
             _backgroundTexture = this.Content.Load<Texture2D>("Background/background");
             _monitorTexture = this.Content.Load<Texture2D>("Background/monitor");
+            _ceilingTexture = this.Content.Load<Texture2D>("Background/ceiling");
             _crosshairTexture = this.Content.Load<Texture2D>("Crosshair/crosshair");
 
             _bubbleTexture = new Texture2D[6];
@@ -71,7 +72,7 @@ namespace SpacePuzzleBobble
             _rectTestTexture.SetData(data);
             _bubbleTexture[5] = _rectTestTexture;
 
-            _font2 = Content.Load<SpriteFont>("Font/GameFont2");
+            _font2 = Content.Load<SpriteFont>("Font/GameFont");
             _font1 = Content.Load<SpriteFont>("Font/GameFont1");
 
             Reset();
@@ -109,33 +110,46 @@ namespace SpacePuzzleBobble
             switch (Singleton.Instance._currentGameState)
             {
                 case Singleton.GameState.Playing:
-                    //if bubbles hit ground
+
+                    _crosshair.Update(gameTime);
                     _bubbleNextOne.Update(gameTime);
 
-                    if(_bubbleNextOne.IsDead)
+                    //if dead -> game over
+                    if (_bubbleNextOne.IsDead)
                     {
                         Singleton.Instance._currentGameState = Singleton.GameState.GameOver;
-                    }else if (_bubbleNextOne.IsHitTop)
+                    }
+
+                    //if won -> clear all bubbles
+                    //still error
+                    else if(_bubbleNextOne.IsWon)
                     {
-                        //Check if the bubble can broke
+                        Singleton.Instance._currentGameState = Singleton.GameState.GameWon;
+                    }
 
-                        //Check if win
-                        //clear all bubbles - no bubbles left
+                    //playing game
+                    else if (_bubbleNextOne.IsHitTop)
+                    {
+                        // Update Bubble Table
+                        //Singleton.Instance.GameBoard[_bubbleNextOne.fx, _bubbleNextOne.fy] = _bubbleNextOne.color;
+                        //Singleton.Instance._bubbleTable[_bubbleNextOne.fx, _bubbleNextOne.fy] = _bubbleNextOne;
 
-                        for (int i = 0; i < 1; i++)
+                        // Change Bubble to next Bubble
+                        _bubbleNextOne = _bubbleNextTwo;
+                        _crosshair.setBubbleNextOne(_bubbleNextOne);  //change color in Crosshair.cs
+
+                        _bubbleNextOne.Position = new Vector2((Singleton.SCREENWIDTH / 2) - Singleton.TILESIZE * 1.40f,
+                                    (Singleton.TILESIZE * 11) + Singleton.TILESIZE / 8f);
+                        _bubbleNextOne.Scale = new Vector2(1 / 1.45f, 1 / 1.45f);
+
+                        _bubbleNextTwo = new Bubble(_bubbleTexture)
                         {
-                            for (int j = 0; j < 8; j++)
-                            {
-                                if (Singleton.Instance.GameBoard[j, i] == -1)
-                                {
-                                    //check every index is equals -1, if then player won
-                                    //Singleton.Instance._currentGameState = Singleton.GameState.GameWon;
-                                }
-                            }
-                        }
+                            Position = new Vector2((Singleton.SCREENWIDTH / 2) - Singleton.TILESIZE * 3.6f,
+                                    Singleton.TILESIZE * 12.3f),
+                            Scale = new Vector2(0.28f, 0.28f)
+                        };
 
-                        //change bubble
-
+                        _bubbleNextTwo.Reset();
                     }
 
                     //change to pause state
@@ -143,8 +157,6 @@ namespace SpacePuzzleBobble
                     {
                         Singleton.Instance._currentGameState = Singleton.GameState.Paused;
                     }
-                    
-                   
                     break;
 
                 case Singleton.GameState.Paused:
@@ -160,47 +172,14 @@ namespace SpacePuzzleBobble
                     break;
 
                 case Singleton.GameState.GameOver: 
-                    //check if are there any availiable block left
+                    //player can re-play when press "R"
                     if(Singleton.Instance.CurrentKey.IsKeyDown(Keys.R) && !Singleton.Instance.CurrentKey.Equals(Singleton.Instance.PreviousKey))
                     {
+                        Singleton.Instance._currentGameState = Singleton.GameState.Playing;
                         Reset();
                         //Singleton.Instance._currentGameState = Singleton.GameState.Idle;
                     }
                     break;
-            }
-
-            _crosshair.Update(gameTime);
-            _bubbleNextOne.Update(gameTime);
-
-            //test change to next bubble, when the first one was shooted
-            //actually this action MUST be in game state, but have to check if it's work
-            //so  I was coding it down here
-            if (_bubbleNextOne.IsDead)
-            {
-                //Reset();
-            }
-            else if (_bubbleNextOne.IsHitTop)
-            {
-                // Update Bubble Table
-                //Singleton.Instance.GameBoard[_bubbleNextOne.fx, _bubbleNextOne.fy] = _bubbleNextOne.color;
-                //Singleton.Instance._bubbleTable[_bubbleNextOne.fx, _bubbleNextOne.fy] = _bubbleNextOne;
-
-                // Change Bubble to next Bubble
-                _bubbleNextOne = _bubbleNextTwo;
-                _crosshair.setBubbleNextOne(_bubbleNextOne);  //change color in Crosshair.cs
-
-                _bubbleNextOne.Position = new Vector2((Singleton.SCREENWIDTH / 2) - Singleton.TILESIZE * 1.40f,
-                            (Singleton.TILESIZE * 11) + Singleton.TILESIZE / 8f);
-                _bubbleNextOne.Scale = new Vector2(1 / 1.45f, 1 / 1.45f);
-
-                _bubbleNextTwo = new Bubble(_bubbleTexture)
-                {
-                    Position = new Vector2((Singleton.SCREENWIDTH / 2) - Singleton.TILESIZE * 3.6f,
-                            Singleton.TILESIZE * 12.3f),
-                    Scale = new Vector2(0.28f, 0.28f)
-                };
-
-                _bubbleNextTwo.Reset();
             }
 
             Singleton.Instance.PreviousKey = Singleton.Instance.CurrentKey;
@@ -253,32 +232,25 @@ namespace SpacePuzzleBobble
                 }
             }
 
-            switch (Singleton.Instance._currentGameState)
+            if(Singleton.Instance._currentGameState == Singleton.GameState.Paused)
             {
-                case Singleton.GameState.Playing:
-
-                    break;
-
-                case Singleton.GameState.Paused:
-                    Vector2 _fontSize = _font.MeasureString("Pause");
-                    _spriteBatch.DrawString(_font, "Pause", new Vector2((Singleton.SCREENWIDTH - _fontSize.X) / 2, (Singleton.SCREENHEIGHT - _fontSize.Y) / 2),
-                                            Color.White, 0f, Vector2.Zero, new Vector2(4.0f, 4.0f), SpriteEffects.None, 1.0f);
-
-                    break;
-
-                case Singleton.GameState.GameWon:
-                    
-                    break;
-
-                case Singleton.GameState.GameOver:
-                    Vector2 _fontSize_over = _font.MeasureString("Press R to restart the game");
-                    _spriteBatch.DrawString(_font, "Press R to restart the game",
-                                            new Vector2((Singleton.SCREENWIDTH - _fontSize_over.X) / 2, (Singleton.SCREENHEIGHT - _fontSize_over.Y) / 2),
-                                            Color.YellowGreen, 0f, Vector2.Zero, new Vector2(1.0f, 1.0f), SpriteEffects.None, 1.0f);
-                    
-                    break;
+                Vector2 _fontSize = _font1.MeasureString("Pause");
+                _spriteBatch.DrawString(_font1, "Pause", new Vector2((Singleton.SCREENWIDTH - _fontSize.X) / 2, (Singleton.SCREENHEIGHT - _fontSize.Y) / 2),
+                Color.White, 0f, Vector2.Zero, new Vector2(4.0f, 4.0f), SpriteEffects.None, 1.0f);
             }
-
+            else if(Singleton.Instance._currentGameState == Singleton.GameState.GameOver)
+            {
+                Vector2 _fontSize_over = _font1.MeasureString("Press R to restart the game");
+                _spriteBatch.DrawString(_font1, "Press R to restart the game",new Vector2((Singleton.SCREENWIDTH - _fontSize_over.X) / 2, (Singleton.SCREENHEIGHT - _fontSize_over.Y) / 2),
+                Color.YellowGreen, 0f, Vector2.Zero, new Vector2(1.0f, 1.0f), SpriteEffects.None, 1.0f);
+            }
+            else if(Singleton.Instance._currentGameState == Singleton.GameState.GameWon)
+            {
+                Vector2 _fontSize_over = _font1.MeasureString("You Win!!");
+                _spriteBatch.DrawString(_font1, "You Win!!",new Vector2((Singleton.SCREENWIDTH - _fontSize_over.X) / 2, (Singleton.SCREENHEIGHT - _fontSize_over.Y) / 2),
+                Color.YellowGreen, 0f, Vector2.Zero, new Vector2(1.0f, 1.0f), SpriteEffects.None, 1.0f);
+            }
+                
             _spriteBatch.End();
             _graphics.BeginDraw();
 
@@ -288,15 +260,15 @@ namespace SpacePuzzleBobble
         protected void Reset()
         {
             //Starting pattern bubbles
-            /*Singleton.Instance.GameBoard = new int[Singleton.GAMEHEIGHT, Singleton.GAMEWIDTH];
+            Singleton.Instance.GameBoard = new int[Singleton.GAMEHEIGHT, Singleton.GAMEWIDTH];
 
-            for (int i = 0; i < Singleton.Instance.GameBoard.GetLength(0); i++)
-            {
-                for (int j = 0; j < Singleton.Instance.GameBoard.GetLength(1); j++)
-                {
-                     Singleton.Instance.GameBoard[i, j] = 5;
-                }
-            }*/
+            /* for (int i = 0; i < Singleton.Instance.GameBoard.GetLength(0); i++)
+             {
+                 for (int j = 0; j < Singleton.Instance.GameBoard.GetLength(1); j++)
+                 {
+                     Singleton.Instance.GameBoard[i, j] = -1;
+                 }
+             }*/
 
             //Starting pattern bubbles
             Singleton.Instance.GameBoard = new int[Singleton.GAMEHEIGHT, Singleton.GAMEWIDTH]

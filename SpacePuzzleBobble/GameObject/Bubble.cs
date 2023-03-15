@@ -11,7 +11,7 @@ namespace SpacePuzzleBobble.GameObject
     {
         public List<Bubble> neighbor, groupNeighbor, FallingBubble;
         public Vector2 _tick, _direction, _positionBox,_positionBubble;
-        public int color, fy, fx;
+        public int color, fy, fx, count = 0;
         public static int index;
 
         //test
@@ -25,6 +25,7 @@ namespace SpacePuzzleBobble.GameObject
 
         public bool IsHitTop; // Bubble Hit the Bubble or Ceiling
         public bool IsDead; // Bubble Hit Floor
+        public bool IsWon; // Clear all bubble
         public bool CanDestroy = false;
 
         public enum BubbleType
@@ -133,12 +134,34 @@ namespace SpacePuzzleBobble.GameObject
                             {
                                 //_direction = Vector2.Zero;
 
-                                DetectCollision();
-                                PasteBubble(Singleton.Instance._bubbleTable[i, j]);
+                                //if collision causes dying, stop this loop
+                                if (i+1 >= Singleton.Instance.GameBoard.GetLength(0))
+                                {
+                                    IsDead = true;
+                                    break;
+                                }
+                                else
+                                {
+                                    DetectCollision();
+                                    PasteBubble(Singleton.Instance._bubbleTable[i, j]);
+                                    IsHitTop = true;
 
-                                //Singleton.Instance._bubbleTable[i, j] = new Bubble(_bubbleTexture[5]);
-                                
-                                IsHitTop = true;
+                                    //have to check all value contain in Game board is it equal -1 (space area), if so the player had clear all bubbles in game and WON
+                                    //create condition here
+                                    count = 0;
+                                    for (int k = 0; k < Singleton.Instance.GameBoard.GetLength(0); k++)
+                                    {
+                                        for (int l = 0; l < Singleton.Instance.GameBoard.GetLength(1); l++)
+                                        {
+                                            if (Singleton.Instance.GameBoard[k, l] == -1) count++;
+
+                                            //every values contained in Singleton.Instance.GameBoard = -1 (all bubble clear)
+                                            if (count == (Singleton.Instance.GameBoard.GetLength(0) * Singleton.Instance.GameBoard.GetLength(1)))
+                                                IsWon = true;
+                                        }
+                                    }
+                                            //Singleton.Instance._bubbleTable[i, j] = new Bubble(_bubbleTexture[5]);
+                                }
                             }
                         }
                     }
@@ -307,6 +330,8 @@ namespace SpacePuzzleBobble.GameObject
                         if (groupSameBubble.Contains(Singleton.Instance._bubbleTable[i, j]))
                         {
                             Singleton.Instance._bubbleTable[i, j] = new Bubble(_bubbleTexture[5]);
+                            Singleton.Instance.GameBoard[i, j] = -1;
+                            //Singleton.Instance._bubbleTable[i, j] = null;
                         }
                     }
                 }
@@ -347,6 +372,8 @@ namespace SpacePuzzleBobble.GameObject
                         if (floatingBubble.Contains(Singleton.Instance._bubbleTable[i, j]))
                         {
                             Singleton.Instance._bubbleTable[i, j] = new Bubble(_bubbleTexture[5]);
+                            Singleton.Instance.GameBoard[i, j] = -1;
+                            //Singleton.Instance._bubbleTable[i, j] = null;
                         }
                     }
                 }
