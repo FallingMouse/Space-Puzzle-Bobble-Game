@@ -13,8 +13,6 @@ namespace SpacePuzzleBobble.GameObject
 
         public Vector2 Velocity;
 
-        //public Color color;
-
         public string Name;
 
         public Rectangle Rectangle

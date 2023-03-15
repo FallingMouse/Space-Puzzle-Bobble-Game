@@ -64,12 +64,8 @@ namespace SpacePuzzleBobble.GameObject
 
         public override void Reset()
         {
-            // Maybe will use this to link between _bubbleNextOne and _bubbleNextTwo
-            // Then we can use this in MainScene.cs like Tetris Lab
-
             //Random the colour of bubble -> called by MainScene.Update()
             color = 0;
-            //CurrentBubbleType = (BubbleType)(Singleton.Instance.Random.Next((int)BubbleType.SIZE));
 
             switch (CurrentBubbleType)
             {
@@ -89,8 +85,6 @@ namespace SpacePuzzleBobble.GameObject
                     color = 4;
                     break;
             }
-            //index = indexOne;
-            //return color;
 
             base.Reset();
         }
@@ -107,15 +101,10 @@ namespace SpacePuzzleBobble.GameObject
                 _direction.X *= -1;
             }
 
-            // Bubble Drop Time
-            //elapsedTime = gameTime.ElapsedGameTime.Ticks / (float)TimeSpan.TicksPerSecond;
-            //elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            bubbleDropTime++;
-            //if (elapsedTime > 0.03f)
-            if (bubbleDropTime == 150)
+            if (Singleton.Instance.countdown == 0)
             {
                 Singleton.Instance.posCeiling++;
-                bubbleDropTime = 0;
+                Singleton.Instance.countdown = 15;
                 foreach (Bubble bubbleTable in Singleton.Instance._bubbleTable)
                 {
                     bubbleTable._positionBox = new Vector2(bubbleTable._positionBox.X, bubbleTable._positionBox.Y + 1);
@@ -127,17 +116,21 @@ namespace SpacePuzzleBobble.GameObject
                     
                 }
 
-                /*for (int i = 0; i < Singleton.Instance.GameBoard.GetLength(0); i++)
+                //Check if ceilling down (Y+1), is the bubble in the last line hit the ground (Y > GameBoard.GetLength(0))
+                for (int i = 0; i < Singleton.Instance.GameBoard.GetLength(0); i++)
                 {
                     for (int j = 0; j < Singleton.Instance.GameBoard.GetLength(1); j++)
                     {
-                        if (Singleton.Instance._bubbleTable[i, j] >= Singleton.Instance.GameBoard.GetLength(0))
+                        if (Singleton.Instance._bubbleTable[i, j].color != 5)
                         {
-                            IsDead = true;
-                            break;
-                        }
+                            if (Singleton.Instance._bubbleTable[i, j]._positionBox.Y + 1 > Singleton.Instance.GameBoard.GetLength(0))
+                            {
+                                IsDead = true;
+                                break;
+                            }
+                        }    
                     }
-                }  */
+                }
             }
 
             // Bubble Hit Ceiling
@@ -188,7 +181,6 @@ namespace SpacePuzzleBobble.GameObject
                                                 IsWon = true;
                                         }
                                     }
-                                            //Singleton.Instance._bubbleTable[i, j] = new Bubble(_bubbleTexture[5]);
                                 }
                             }
                         }
@@ -350,6 +342,7 @@ namespace SpacePuzzleBobble.GameObject
 
             if (groupSameBubble.Count >= 3)
             {
+                Singleton.Instance.Score += groupSameBubble.Count * 50;
                 //do else 
                 FallingBubble = groupSameBubble;
 
@@ -360,8 +353,9 @@ namespace SpacePuzzleBobble.GameObject
                         if (groupSameBubble.Contains(Singleton.Instance._bubbleTable[i, j]))
                         {
                             Singleton.Instance._bubbleTable[i, j] = new Bubble(_bubbleTexture[5]);
+                            Singleton.Instance._bubbleTable[i, j].color = 5;
+                            Singleton.Instance._bubbleTable[fy, fx].color = 5;
                             Singleton.Instance.GameBoard[i, j] = -1;
-                            //Singleton.Instance._bubbleTable[i, j] = null;
                         }
                     }
                 }
@@ -402,8 +396,8 @@ namespace SpacePuzzleBobble.GameObject
                         if (floatingBubble.Contains(Singleton.Instance._bubbleTable[i, j]))
                         {
                             Singleton.Instance._bubbleTable[i, j] = new Bubble(_bubbleTexture[5]);
+                            Singleton.Instance._bubbleTable[i, j].color = 5;
                             Singleton.Instance.GameBoard[i, j] = -1;
-                            //Singleton.Instance._bubbleTable[i, j] = null;
                         }
                     }
                 }

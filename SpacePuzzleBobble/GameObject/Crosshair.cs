@@ -7,8 +7,6 @@ namespace SpacePuzzleBobble.GameObject
 {
     class Crosshair : GameObject
     {
-        private Texture2D _bobbleTexture;
-        
         private Bubble _bubbleNext, _bubbleNextTwo;
 
         private float _elapsedTime;
@@ -43,8 +41,6 @@ namespace SpacePuzzleBobble.GameObject
             if (Rotation >= 0.42f) Rotation = 0.42f;
             else if (Rotation <= -0.42f) Rotation = -0.42f;
 
-            /*if (Singleton.Instance.isShooting)
-                _bubbleNext.Update(gameTime);*/
             if (!_spacebarPressed && Singleton.Instance.CurrentKey.IsKeyDown(Keys.Space) && !Singleton.Instance.CurrentKey.Equals(Singleton.Instance.PreviousKey))
             {
                 //Singleton.Instance.isShooting = true;
@@ -59,8 +55,6 @@ namespace SpacePuzzleBobble.GameObject
                 _bubbleNext._direction.Y -= m.M11 * 25f;
 
                 _bubbleNext.Update(gameTime);
-
-                //_bubbleNext = _bubbleNextTwo;
             }
 
             if (_spacebarPressed)

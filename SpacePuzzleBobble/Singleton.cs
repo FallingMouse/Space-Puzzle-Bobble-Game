@@ -1,12 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿//using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using SpacePuzzleBobble.GameObject;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Formats.Asn1.AsnWriter;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Text;
+//using System.Threading.Tasks;
+//using static System.Formats.Asn1.AsnWriter;
 
 namespace SpacePuzzleBobble
 {
@@ -23,8 +23,10 @@ namespace SpacePuzzleBobble
         public const int SCREENHEIGHT = 1080;
 
         public int Score;
-        public int Countdown;
+        public int countdown = 15;
+        public float timer = 0f;
 
+        public Boolean isPaused = false;
         public Boolean spacebarPressed = false;
         public Boolean isShooting = false;
 
