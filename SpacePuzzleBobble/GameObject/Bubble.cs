@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -384,39 +385,5 @@ namespace SpacePuzzleBobble.GameObject
             //index = indexOne;
             return index;
         }
-
-        /*private bool CheckHit()
-        {
-            bool isHisTop = false;
-
-            if(Position.Y / Singleton.TILESIZE < Singleton.GAMEHEIGHT && 
-               Position.Y / Singleton.TILESIZE >= 0)
-            {
-                //collision occur -> hit the  top
-                isHisTop = true;
-            }
-            else if(Position.Y / Singleton.TILESIZE > Singleton.GAMEHEIGHT)
-            {
-                //game over
-            }
-
-            //still have an exception
-            *//*
-            else if (Singleton.Instance.GameBoard[ (int)Position.Y / Singleton.TILESIZE, 
-                        (int)Position.X / Singleton.TILESIZE] != -1)
-            {
-                //collision occur -> hit other bubble
-                isHisTop = true;
-            }*//*
-
-            return isHisTop;
-        }
-
-        private bool CheckDead()
-        {
-            bool isDead = false;
-
-            return isDead;
-        }*/
-    } //class
+    } //class 
 }

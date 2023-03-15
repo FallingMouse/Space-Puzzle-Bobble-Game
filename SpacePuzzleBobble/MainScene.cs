@@ -5,8 +5,11 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SpacePuzzleBobble.GameObject;
+
+// gameState Change
 using System.Collections.Generic;
 using System.Reflection;
+using static SpacePuzzleBobble.Singleton;
 
 namespace SpacePuzzleBobble
 {
@@ -101,6 +104,71 @@ namespace SpacePuzzleBobble
             };
 
             // TODO: Add your update logic here
+            //update game state
+
+            switch (Singleton.Instance._currentGameState)
+            {
+                case Singleton.GameState.Playing:
+                    //if bubbles hit ground
+                    _bubbleNextOne.Update(gameTime);
+
+                    if(_bubbleNextOne.IsDead)
+                    {
+                        Singleton.Instance._currentGameState = Singleton.GameState.GameOver;
+                    }else if (_bubbleNextOne.IsHitTop)
+                    {
+                        //Check if the bubble can broke
+
+                        //Check if win
+                        //clear all bubbles - no bubbles left
+
+                        for (int i = 0; i < 1; i++)
+                        {
+                            for (int j = 0; j < 8; j++)
+                            {
+                                if (Singleton.Instance.GameBoard[j, i] == -1)
+                                {
+                                    //check every index is equals -1, if then player won
+                                    //Singleton.Instance._currentGameState = Singleton.GameState.GameWon;
+                                }
+                            }
+                        }
+
+                        //change bubble
+
+                    }
+
+                    //change to pause state
+                    if (Singleton.Instance.CurrentKey.IsKeyDown(Keys.P) && !Singleton.Instance.CurrentKey.Equals(Singleton.Instance.PreviousKey))
+                    {
+                        Singleton.Instance._currentGameState = Singleton.GameState.Paused;
+                    }
+                    
+                   
+                    break;
+
+                case Singleton.GameState.Paused:
+                    //handled game pause
+                    if (Singleton.Instance.CurrentKey.IsKeyDown(Keys.U) && !Singleton.Instance.CurrentKey.Equals(Singleton.Instance.PreviousKey))
+                    {
+                        Singleton.Instance._currentGameState = Singleton.GameState.Playing;
+                    }
+                    break;
+
+                case Singleton.GameState.GameWon:
+                  
+                    break;
+
+                case Singleton.GameState.GameOver: 
+                    //check if are there any availiable block left
+                    if(Singleton.Instance.CurrentKey.IsKeyDown(Keys.R) && !Singleton.Instance.CurrentKey.Equals(Singleton.Instance.PreviousKey))
+                    {
+                        Reset();
+                        //Singleton.Instance._currentGameState = Singleton.GameState.Idle;
+                    }
+                    break;
+            }
+
             _crosshair.Update(gameTime);
             _bubbleNextOne.Update(gameTime);
 
@@ -185,6 +253,32 @@ namespace SpacePuzzleBobble
                 }
             }
 
+            switch (Singleton.Instance._currentGameState)
+            {
+                case Singleton.GameState.Playing:
+
+                    break;
+
+                case Singleton.GameState.Paused:
+                    Vector2 _fontSize = _font.MeasureString("Pause");
+                    _spriteBatch.DrawString(_font, "Pause", new Vector2((Singleton.SCREENWIDTH - _fontSize.X) / 2, (Singleton.SCREENHEIGHT - _fontSize.Y) / 2),
+                                            Color.White, 0f, Vector2.Zero, new Vector2(4.0f, 4.0f), SpriteEffects.None, 1.0f);
+
+                    break;
+
+                case Singleton.GameState.GameWon:
+                    
+                    break;
+
+                case Singleton.GameState.GameOver:
+                    Vector2 _fontSize_over = _font.MeasureString("Press R to restart the game");
+                    _spriteBatch.DrawString(_font, "Press R to restart the game",
+                                            new Vector2((Singleton.SCREENWIDTH - _fontSize_over.X) / 2, (Singleton.SCREENHEIGHT - _fontSize_over.Y) / 2),
+                                            Color.YellowGreen, 0f, Vector2.Zero, new Vector2(1.0f, 1.0f), SpriteEffects.None, 1.0f);
+                    
+                    break;
+            }
+
             _spriteBatch.End();
             _graphics.BeginDraw();
 
@@ -219,6 +313,9 @@ namespace SpacePuzzleBobble
             /*8*/    {-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,-1 }
             };
 
+            //Set game state
+            Singleton.Instance._currentGameState = Singleton.GameState.Playing;
+            
             Singleton.Instance._bubbleTable = new Bubble[Singleton.GAMEHEIGHT, Singleton.GAMEWIDTH];
 
             // Bubble Table
